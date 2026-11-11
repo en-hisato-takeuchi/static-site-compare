@@ -17,7 +17,10 @@
     "e2e": "playwright test",
     "measure:lighthouse": "node tools/measure/lighthouse.js",
     "measure:size": "node tools/measure/size.js",
-    "measure:build": "node tools/measure/build-time.js"
+    "measure:build": "node tools/measure/build-time.js",
+    "measure:deps": "node tools/measure/deps.js",
+    "capture": "node tools/capture.js",
+    "convert-images": "node tools/convert-images.js"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -28,6 +31,7 @@
     "globals": "^17.14.0",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "1.1.2",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1"
   }
