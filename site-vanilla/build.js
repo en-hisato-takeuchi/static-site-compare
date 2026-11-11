@@ -7,47 +7,25 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+  CATEGORY_LABELS,
+  SITE_NAME,
+  SITE_URL,
+  escapeHtml,
+  formatDate,
+  jobUrl,
+  render,
+  renderJobDetail,
+} from './job-page.js'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const SRC = join(ROOT, 'src')
 const DIST = join(ROOT, 'dist')
 const TEMPLATES = join(SRC, '_templates')
 
-// 公開先はまだないので仮の値。OGP の og:url に使う
-const SITE_URL = 'https://example.com'
-const SITE_NAME = '株式会社ロウリュ研究所 採用サイト'
 const PER_PAGE = 10
 const LATEST_COUNT = 3
 const API_LIMIT = 100
-const DESCRIPTION_LENGTH = 120
-
-const CATEGORY_LABELS = {
-  store: '店舗スタッフ',
-  facility: '施設管理',
-  office: '本社',
-}
-const CATEGORY_PHOTOS = {
-  store: {
-    name: 'category-store',
-    alt: 'サウナストーンにひしゃくで水をかけるところ',
-    width: 1280,
-    height: 1920,
-  },
-  facility: {
-    name: 'category-facility',
-    alt: '窓辺に置いたサウナストーブ',
-    width: 1920,
-    height: 1280,
-  },
-  office: {
-    name: 'category-office',
-    alt: 'ノートパソコンで仕事をする社員の手元',
-    width: 1280,
-    height: 1920,
-  },
-}
-const PHOTO_WIDTHS = [640, 1280]
-const PHOTO_SIZES = '(min-width: 50rem) 46rem, 100vw'
 
 const { MICROCMS_API_ENDPOINT, MICROCMS_API_KEY } = process.env
 if (!MICROCMS_API_ENDPOINT || !MICROCMS_API_KEY) {
@@ -55,42 +33,6 @@ if (!MICROCMS_API_ENDPOINT || !MICROCMS_API_KEY) {
     'MICROCMS_API_ENDPOINT と MICROCMS_API_KEY を .env に書いてください',
   )
 }
-
-const escapeHtml = (text) =>
-  String(text).replace(
-    /[&<>"']/g,
-    (char) =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[
-        char
-      ],
-  )
-
-// %%名前%% を値で置き換える。値はあらかじめエスケープしておく
-const render = (template, values) =>
-  template.replace(/%%(\w+)%%/g, (_, key) => {
-    if (!(key in values))
-      throw new Error(`ひな形の %%${key}%% に入れる値がありません`)
-    return values[key]
-  })
-
-const formatDate = (iso) => {
-  const date = new Date(iso)
-  const label = new Intl.DateTimeFormat('ja-JP', {
-    dateStyle: 'long',
-    timeZone: 'Asia/Tokyo',
-  }).format(date)
-  const datetime = new Intl.DateTimeFormat('sv-SE', {
-    timeZone: 'Asia/Tokyo',
-  }).format(date)
-  return `<time datetime="${datetime}">${label}</time>`
-}
-
-const toDescription = (html) =>
-  html
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, DESCRIPTION_LENGTH)
 
 const fetchAllJobs = async () => {
   const jobs = []
@@ -130,8 +72,6 @@ ${jobs
 
 const EMPTY_STATE =
   '<p class="empty-state">現在募集している職種はありません。</p>'
-
-const jobUrl = (job) => `/jobs/${job.category[0]}/${job.id}/`
 
 // category が null のときは、すべての職種の一覧
 const listUrl = (category) => (category ? `/jobs/${category}/` : '/jobs/')
@@ -182,16 +122,6 @@ const redirectPage = (to) => `<!doctype html>
 </html>
 `
 
-const picture = ({ name, alt, width, height }) => {
-  const srcset = (format) =>
-    PHOTO_WIDTHS.map((w) => `/images/${name}-${w}.${format} ${w}w`).join(', ')
-  return `<picture>
-<source type="image/avif" srcset="${srcset('avif')}" sizes="${PHOTO_SIZES}" />
-<source type="image/webp" srcset="${srcset('webp')}" sizes="${PHOTO_SIZES}" />
-<img class="job-detail__image" src="/images/${name}-${PHOTO_WIDTHS.at(-1)}.jpg" srcset="${srcset('jpg')}" sizes="${PHOTO_SIZES}" width="${width}" height="${height}" alt="${alt}" loading="eager" decoding="async" />
-</picture>`
-}
-
 const writePage = async (path, html) => {
   const file = join(DIST, path, 'index.html')
   await mkdir(dirname(file), { recursive: true })
@@ -240,6 +170,7 @@ for (const category of [null, ...Object.keys(CATEGORY_LABELS)]) {
         description: escapeHtml(
           `${category ? `${CATEGORY_LABELS[category]}の、` : ''}${DESCRIPTION}${suffix}。`,
         ),
+        robots: '',
         heading,
         categoryNav: categoryNav(category),
         content,
@@ -250,28 +181,8 @@ for (const category of [null, ...Object.keys(CATEGORY_LABELS)]) {
 }
 
 // 求人詳細
-const detailTemplate = await readFile(join(TEMPLATES, 'job.html'), 'utf-8')
 for (const job of jobs) {
-  const category = job.category[0]
-  await writePage(
-    jobUrl(job),
-    render(detailTemplate, {
-      title: escapeHtml(`${job.title} | ${SITE_NAME}`),
-      description: escapeHtml(toDescription(job.body)),
-      url: `${SITE_URL}${jobUrl(job)}`,
-      jobTitle: escapeHtml(job.title),
-      image: picture(CATEGORY_PHOTOS[category]),
-      category: CATEGORY_LABELS[category],
-      categorySlug: category,
-      location: escapeHtml(job.location[0]),
-      employmentType: escapeHtml(job.employmentType[0]),
-      salary: escapeHtml(job.salary),
-      publishedAt: formatDate(job.publishedAt),
-      // CMS のリッチエディタの HTML をそのまま入れる
-      body: job.body,
-      requirements: escapeHtml(job.requirements),
-    }),
-  )
+  await writePage(jobUrl(job), await renderJobDetail(job))
   // 旧 URL（/jobs/{id}/）。対応表は CMS のデータから作る
   await writePage(`/jobs/${job.id}/`, redirectPage(jobUrl(job)))
 }

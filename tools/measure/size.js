@@ -4,6 +4,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import { brotliCompressSync } from 'node:zlib'
+import { ROOT } from '../stacks.js'
 import {
   formatBytes,
   markdownTable,
@@ -27,11 +28,12 @@ const kindOf = (file) => {
   )
 }
 
-const listFiles = async (dir) => {
+const listFiles = async ({ dir, include = () => true }) => {
   const entries = await readdir(dir, { recursive: true, withFileTypes: true })
   return entries
     .filter((entry) => entry.isFile())
     .map((entry) => join(entry.parentPath, entry.name))
+    .filter(include)
 }
 
 const measure = async (stack) => {
@@ -41,7 +43,11 @@ const measure = async (stack) => {
       { files: 0, raw: 0, compressed: 0 },
     ]),
   )
-  for (const file of await listFiles(stack.outPath)) {
+  const sources = (stack.served ?? [{ dir: stack.outDir }]).map((source) => ({
+    ...source,
+    dir: join(ROOT, source.dir),
+  }))
+  for (const file of (await Promise.all(sources.map(listFiles))).flat()) {
     const kind = kindOf(file)
     const content = await readFile(file)
     const compressed =

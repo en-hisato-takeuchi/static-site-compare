@@ -1,0 +1,89 @@
+---
+// 求人詳細の本文。公開用のページ（[category]/[id].astro）とプレビュー（preview.astro）で共有する
+import categoryFacility from '../../../spec/assets/images/category-facility.jpg'
+import categoryOffice from '../../../spec/assets/images/category-office.jpg'
+import categoryStore from '../../../spec/assets/images/category-store.jpg'
+import { CATEGORY_LABELS, type JobContent } from '../lib/jobs'
+import JobDate from './JobDate.astro'
+import Photo from './Photo.astro'
+
+interface Props {
+  job: JobContent
+}
+
+// 求人データに写真は持たせず、職種カテゴリの写真を使う
+const CATEGORY_PHOTOS = {
+  store: {
+    src: categoryStore,
+    alt: 'サウナストーンにひしゃくで水をかけるところ',
+  },
+  facility: { src: categoryFacility, alt: '窓辺に置いたサウナストーブ' },
+  office: { src: categoryOffice, alt: 'ノートパソコンで仕事をする社員の手元' },
+}
+
+const { job } = Astro.props
+const category = job.category[0]
+const photo = CATEGORY_PHOTOS[category]
+---
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="パンくず">
+    <ol class="breadcrumb__list">
+      <li class="breadcrumb__item">
+        <a href="/">トップ</a>
+      </li>
+      <li class="breadcrumb__item">
+        <a href="/jobs/">求人一覧</a>
+      </li>
+      <li class="breadcrumb__item">
+        <a href={`/jobs/${category}/`}>{CATEGORY_LABELS[category]}</a>
+      </li>
+      <li class="breadcrumb__item" aria-current="page">
+        {job.title}
+      </li>
+    </ol>
+  </nav>
+  <article class="job-detail">
+    <h1 class="job-detail__title">{job.title}</h1>
+    <Photo
+      src={photo.src}
+      alt={photo.alt}
+      class="job-detail__image"
+      layout="prose"
+      eager
+    />
+    <dl class="job-summary">
+      <dt>職種カテゴリ</dt>
+      <dd>
+        <span class="category-tag">{CATEGORY_LABELS[category]}</span>
+      </dd>
+      <dt>勤務地</dt>
+      <dd>{job.location[0]}</dd>
+      <dt>雇用形態</dt>
+      <dd>{job.employmentType[0]}</dd>
+      <dt>給与</dt>
+      <dd>{job.salary}</dd>
+      <dt>公開日</dt>
+      <dd>
+        <JobDate date={job.publishedAt} />
+      </dd>
+    </dl>
+    <section class="job-detail__section">
+      <h2 class="job-detail__heading">仕事内容</h2>
+      {/* CMS のリッチエディタの HTML をそのまま入れる */}
+      <div class="rich-text" set:html={job.body} />
+    </section>
+    <section class="job-detail__section">
+      <h2 class="job-detail__heading">応募の条件</h2>
+      <div class="section__body">
+        <p>{job.requirements}</p>
+      </div>
+    </section>
+    <div class="job-detail__actions">
+      <a class="button" href="/process/#visit">
+        まずはサウナ見学から
+      </a>
+      <a href="/jobs/">求人一覧に戻る</a>
+    </div>
+  </article>
+</div>

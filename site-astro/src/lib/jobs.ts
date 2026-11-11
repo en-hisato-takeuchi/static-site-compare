@@ -16,6 +16,18 @@ export const getJobs = async () =>
 
 export type Category = keyof typeof CATEGORY_LABELS
 
+// 求人詳細に出す項目。公開済みの求人（コンテンツコレクション）も、プレビューの下書きも、この形にそろえる
+export interface JobContent {
+  title: string
+  category: Category[]
+  location: string[]
+  employmentType: string[]
+  salary: string
+  body: string
+  requirements: string
+  publishedAt: Date
+}
+
 export const jobUrl = (job: CollectionEntry<'jobs'>) =>
   `/jobs/${job.data.category[0]}/${job.id}/`
 

@@ -7,3 +7,9 @@ export const MOCK_CMS = {
   // 1リクエストごとに待たせる時間。ネットワークの遅さを3構成で同じにする
   latencyMs: 50,
 }
+
+// 公開前の求人（spec/cms/drafts.json）を返すための値。プレビューの URL に付ける
+export const DRAFT_PREVIEW = {
+  id: 'dr4ftsample',
+  draftKey: 'dummy-draft-key',
+}

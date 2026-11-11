@@ -6,11 +6,13 @@
 // - テキストは、ブラウザが対応していれば brotli か gzip で圧縮して返す
 import { createReadStream } from 'node:fs'
 import { stat } from 'node:fs/promises'
+import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
 import { extname, join, normalize, sep } from 'node:path'
 import { pipeline } from 'node:stream/promises'
+import { pathToFileURL } from 'node:url'
 import { createBrotliCompress, createGzip } from 'node:zlib'
-import { getStack } from './stacks.js'
+import { PREVIEW_PATH, ROOT, getStack } from './stacks.js'
 
 const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -84,7 +86,9 @@ const send = async (req, res, status, filePath) => {
   else await pipeline(source, res)
 }
 
-const handle = async (root, req, res) => {
+const handle = async (root, preview, req, res) => {
+  const { pathname } = new URL(req.url ?? '/', 'http://localhost')
+  if (preview && pathname === PREVIEW_PATH) return preview(req, res)
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { Allow: 'GET, HEAD' }).end()
     return
@@ -110,13 +114,49 @@ const handle = async (root, req, res) => {
     .end('Not Found')
 }
 
+// 静的なファイルでは配れない構成（Next.js）は、その構成のサーバーを起動して、準備ができるまで待つ
+const startAppServer = async (stack) => {
+  const child = spawn(process.execPath, stack.start.args, {
+    cwd: join(ROOT, stack.start.cwd),
+    stdio: ['ignore', 'ignore', 'inherit'],
+  })
+  const url = `http://127.0.0.1:${stack.port}`
+  for (let attempt = 0; attempt < 100; attempt++) {
+    if (child.exitCode !== null)
+      throw new Error(`${stack.name} が起動しませんでした`)
+    if (
+      await fetch(`${url}/`).then(
+        () => true,
+        () => false,
+      )
+    ) {
+      return { server: { close: () => child.kill() }, url, child }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+  child.kill()
+  throw new Error(`${stack.name} の起動を待ちきれませんでした`)
+}
+
 export const startServer = async (name) => {
   const stack = getStack(name)
+  if (stack.start) {
+    if (!(await isDirectory(stack.outPath))) {
+      throw new Error(`${stack.outDir} がありません。先にビルドしてください`)
+    }
+    return startAppServer(stack)
+  }
   if (!(await isDirectory(stack.outPath))) {
     throw new Error(`${stack.outDir} がありません。先にビルドしてください`)
   }
+  // プレビューのページだけは、構成ごとの関数に任せる（サーバーで HTML を組み立てる）
+  const preview = stack.preview
+    ? (await import(pathToFileURL(join(ROOT, stack.preview.module)).href))[
+        stack.preview.export
+      ]
+    : null
   const server = createServer((req, res) => {
-    handle(stack.outPath, req, res).catch((error) => {
+    handle(stack.outPath, preview, req, res).catch((error) => {
       // ブラウザが読み込みを途中でやめたとき（遅延読み込みの画像など）は、エラーとして扱わない
       if (CLIENT_ABORTS.has(error.code)) return
       console.error(error)
@@ -130,6 +170,13 @@ export const startServer = async (name) => {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { url } = await startServer(process.argv[2])
+  const { url, child } = await startServer(process.argv[2])
+  // Playwright などに止められたら、起動した子のサーバーも止める
+  for (const signal of ['SIGINT', 'SIGTERM']) {
+    process.on(signal, () => {
+      child?.kill()
+      process.exit(0)
+    })
+  }
   console.log(`${process.argv[2]} を ${url} で配信しています`)
 }

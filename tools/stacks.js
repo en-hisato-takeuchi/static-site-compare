@@ -11,13 +11,17 @@ export const STACKS = {
     // Phase 2 から、build.js で求人のページを書き出す
     outDir: 'site-vanilla/dist',
     port: 4001,
+    // プレビュー（/jobs/preview/）だけ、リクエストのたびにこの関数が HTML を返す
+    preview: { module: 'site-vanilla/preview.js', export: 'handlePreview' },
     // ビルドのキャッシュとして、初回のビルドの前に消すもの
     cachePaths: [],
   },
   astro: {
     package: 'site-astro',
-    outDir: 'site-astro/dist',
+    // Node アダプターを入れたので、静的なファイルは dist/client に出る（dist/server はプレビュー用）
+    outDir: 'site-astro/dist/client',
     port: 4002,
+    preview: { module: 'site-astro/dist/server/entry.mjs', export: 'handler' },
     cachePaths: [
       'site-astro/.astro',
       'site-astro/node_modules/.astro',
@@ -26,8 +30,22 @@ export const STACKS = {
   },
   next: {
     package: 'site-next',
-    outDir: 'site-next/out',
+    // output: 'export' をやめたので、静的な書き出しはない。ビルドの結果は .next にあり、next start で配る
+    outDir: 'site-next/.next',
     port: 4003,
+    start: {
+      cwd: 'site-next',
+      args: ['node_modules/next/dist/bin/next', 'start', '-p', '4003'],
+    },
+    // 利用者に届くファイル（サイズの計測の対象）。サーバー側のコードは含めない
+    served: [
+      { dir: 'site-next/.next/static' },
+      { dir: 'site-next/public' },
+      {
+        dir: 'site-next/.next/server/app',
+        include: (file) => file.endsWith('.html') || file.endsWith('.rsc'),
+      },
+    ],
     cachePaths: ['site-next/.next', 'site-next/tsconfig.tsbuildinfo'],
   },
 }
@@ -48,6 +66,9 @@ export const PAGES = [
   '/jobs/store/',
   ...(JOBS.length > 0 ? [`/jobs/${JOBS[0].category[0]}/${JOBS[0].id}/`] : []),
 ]
+
+// プレビューのページの URL。静的な HTML では作れず、リクエストのたびにサーバーで組み立てる
+export const PREVIEW_PATH = '/jobs/preview/'
 
 export const stackNames = Object.keys(STACKS)
 

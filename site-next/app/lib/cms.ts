@@ -58,3 +58,25 @@ export const getAllJobKeys = async () => {
     if (keys.length >= totalCount) return keys
   }
 }
+
+// CMS から下書きの求人を取る。id か draftKey が合わないとき（CMS が 404 を返すとき）は null。
+// プレビューは毎回取り直す。API キーはサーバーの環境変数にだけ置き、ブラウザには出さない
+export const getDraft = async (id: string, draftKey: string) => {
+  const endpoint = process.env.MICROCMS_API_ENDPOINT
+  const apiKey = process.env.MICROCMS_API_KEY
+  if (!endpoint || !apiKey) {
+    throw new Error(
+      'MICROCMS_API_ENDPOINT と MICROCMS_API_KEY を .env に書いてください',
+    )
+  }
+  const response = await fetch(
+    `${endpoint}/jobs/${encodeURIComponent(id)}?draftKey=${encodeURIComponent(draftKey)}`,
+    { headers: { 'X-MICROCMS-API-KEY': apiKey }, cache: 'no-store' },
+  )
+  if (response.status === 404) return null
+  if (!response.ok) {
+    throw new Error(`下書きの取得に失敗しました（${response.status}）`)
+  }
+  const draft: Job = await response.json()
+  return draft
+}
