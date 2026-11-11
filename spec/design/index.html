@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>株式会社ロウリュ研究所 採用サイト</title>
+    <meta
+      name="description"
+      content="都市の5つの研究棟で、ととのいを研究し、届ける仲間を募集しています。"
+    />
+    <script>
+      document.documentElement.classList.add('js')
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="menu.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="site-header__logo" href="index.html">
+          株式会社ロウリュ研究所
+          <small>採用サイト</small>
+        </a>
+        <a class="button button--small site-header__apply" href="process.html"
+          >応募する</a
+        >
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          メニュー
+        </button>
+        <nav
+          class="site-nav"
+          id="site-nav"
+          data-open="false"
+          aria-label="サイト内"
+        >
+          <ul class="site-nav__list">
+            <li>
+              <a class="site-nav__link" href="about.html">私たちについて</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="workplace.html">働く環境</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="process.html">選考の流れ</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="jobs.html">求人一覧</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="jobs.html#category-nav"
+                >職種から探す</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <section class="hero">
+        <img
+          class="hero__image"
+          src="placeholder.svg"
+          width="1920"
+          height="1080"
+          alt=""
+          fetchpriority="high"
+        />
+        <div class="hero__body">
+          <div class="container">
+            <h1 class="hero__title">熱いのは、<br />サウナだけじゃない。</h1>
+            <p class="hero__lead">
+              都市の5つの研究棟で、ととのいを研究し、届ける仲間を募集しています。
+            </p>
+            <a class="button" href="process.html">応募する</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="container section" id="about">
+        <h2 class="section__title">私たちについて</h2>
+        <div class="section__body">
+          <p>
+            ロウリュ研究所は、都市型のサウナ施設を5つ運営しています。店舗を「研究棟」と呼ぶのは、温度と湿度と休憩の組み合わせを、毎日まじめに試しているからです。
+          </p>
+          <p class="section__more">
+            <a href="about.html">私たちについて詳しく見る</a>
+          </p>
+        </div>
+        <div class="photo-mosaic">
+          <figure class="photo-mosaic__main">
+            <img
+              class="photo-mosaic__image"
+              src="placeholder.svg"
+              width="1600"
+              height="1067"
+              alt=""
+              loading="lazy"
+            />
+            <figcaption>
+              神田研究棟のサウナ室。92℃で毎朝10時に開きます。
+            </figcaption>
+          </figure>
+          <figure class="photo-mosaic__sub">
+            <img
+              class="photo-mosaic__image"
+              src="placeholder.svg"
+              width="1600"
+              height="1067"
+              alt=""
+              loading="lazy"
+            />
+            <figcaption>水風呂は16.0℃。</figcaption>
+          </figure>
+          <figure class="photo-mosaic__sub">
+            <img
+              class="photo-mosaic__image"
+              src="placeholder.svg"
+              width="1600"
+              height="1067"
+              alt=""
+              loading="lazy"
+            />
+            <figcaption>外気浴の椅子は、毎日向きを調整しています。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="container section">
+        <h2 class="section__title">温度で見るロウリュ研究所</h2>
+        <div class="thermo">
+          <div class="thermo__scale" aria-hidden="true">
+            <span class="thermo__mark thermo__mark--cold" style="--at: 0%"
+              >16℃</span
+            >
+            <span class="thermo__mark thermo__mark--air" style="--at: 10.5%"
+              >24℃</span
+            >
+            <span class="thermo__mark thermo__mark--hot" style="--at: 100%"
+              >92℃</span
+            >
+          </div>
+          <dl class="thermo__list">
+            <div class="thermo__item thermo__item--cold">
+              <dt class="thermo__label">
+                水風呂。夏も冬も、0.1℃単位で守っています
+              </dt>
+              <dd class="thermo__value">16.0℃</dd>
+            </div>
+            <div class="thermo__item">
+              <dt class="thermo__label">
+                外気浴スペースの、いちばん気持ちいい気温
+              </dt>
+              <dd class="thermo__value">24℃</dd>
+            </div>
+            <div class="thermo__item thermo__item--hot">
+              <dt class="thermo__label">神田研究棟のサウナ室</dt>
+              <dd class="thermo__value">92℃</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="container section">
+        <h2 class="section__title">3つの仕事</h2>
+        <ul class="category-cards">
+          <li class="category-cards__item">
+            <img
+              class="category-cards__image"
+              src="placeholder.svg"
+              width="1200"
+              height="1500"
+              alt=""
+              loading="lazy"
+            />
+            <div class="category-cards__body">
+              <h3 class="category-cards__title">
+                <a href="jobs.html">店舗スタッフ</a>
+              </h3>
+              <p class="category-cards__text">
+                熱波師、ロウリュ担当、休憩処スタッフ。お客さまのいちばん近くで、温度を届けます。
+              </p>
+            </div>
+          </li>
+          <li class="category-cards__item">
+            <img
+              class="category-cards__image"
+              src="placeholder.svg"
+              width="1200"
+              height="1500"
+              alt=""
+              loading="lazy"
+            />
+            <div class="category-cards__body">
+              <h3 class="category-cards__title">
+                <a href="jobs.html">施設管理</a>
+              </h3>
+              <p class="category-cards__text">
+                水風呂の温度管理、サウナストーブの保守、テントサウナの設営。研究棟の環境を守ります。
+              </p>
+            </div>
+          </li>
+          <li class="category-cards__item">
+            <img
+              class="category-cards__image"
+              src="placeholder.svg"
+              width="1200"
+              height="1500"
+              alt=""
+              loading="lazy"
+            />
+            <div class="category-cards__body">
+              <h3 class="category-cards__title">
+                <a href="jobs.html">本社</a>
+              </h3>
+              <p class="category-cards__text">
+                新店舗の開発、広報、Web
+                エンジニア。次の研究棟と、ここまでの道のりをつくります。
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="container section">
+        <h2 class="section__title">新着の求人</h2>
+        <ul class="job-list">
+          <li class="job-list__item">
+            <h3 class="job-list__title">
+              <a href="job.html">神田研究棟の熱波師（正社員）</a>
+            </h3>
+            <dl class="job-list__meta">
+              <dt>職種カテゴリ</dt>
+              <dd><span class="category-tag">店舗スタッフ</span></dd>
+              <dt>勤務地</dt>
+              <dd>神田研究棟</dd>
+              <dt>雇用形態</dt>
+              <dd>正社員</dd>
+              <dt>給与</dt>
+              <dd>月給28万円〜</dd>
+            </dl>
+            <p class="job-list__date">
+              公開日 <time datetime="2026-11-08">2026年11月8日</time>
+            </p>
+          </li>
+          <li class="job-list__item">
+            <h3 class="job-list__title">
+              <a href="job.html">湖畔研究棟のテントサウナ設営（アルバイト）</a>
+            </h3>
+            <dl class="job-list__meta">
+              <dt>職種カテゴリ</dt>
+              <dd><span class="category-tag">施設管理</span></dd>
+              <dt>勤務地</dt>
+              <dd>湖畔研究棟</dd>
+              <dt>雇用形態</dt>
+              <dd>アルバイト</dd>
+              <dt>給与</dt>
+              <dd>時給1,400円〜</dd>
+            </dl>
+            <p class="job-list__date">
+              公開日 <time datetime="2026-11-07">2026年11月7日</time>
+            </p>
+          </li>
+          <li class="job-list__item">
+            <h3 class="job-list__title">
+              <a href="job.html">本社の Web エンジニア（正社員）</a>
+            </h3>
+            <dl class="job-list__meta">
+              <dt>職種カテゴリ</dt>
+              <dd><span class="category-tag">本社</span></dd>
+              <dt>勤務地</dt>
+              <dd>本社</dd>
+              <dt>雇用形態</dt>
+              <dd>正社員</dd>
+              <dt>給与</dt>
+              <dd>年収520万円〜</dd>
+            </dl>
+            <p class="job-list__date">
+              公開日 <time datetime="2026-11-05">2026年11月5日</time>
+            </p>
+          </li>
+        </ul>
+        <p class="section__more"><a href="jobs.html">求人一覧を見る</a></p>
+      </section>
+
+      <section class="container section">
+        <h2 class="section__title">研究員の声</h2>
+        <ul class="voice-list">
+          <li class="voice-list__item">
+            <img
+              class="voice-list__photo"
+              src="placeholder.svg"
+              width="800"
+              height="1000"
+              alt=""
+              loading="lazy"
+            />
+            <p class="voice-list__quote">入社理由は、ととのったからです。</p>
+            <p class="voice-list__person">熱波師／神田研究棟／2023年入社</p>
+          </li>
+          <li class="voice-list__item">
+            <img
+              class="voice-list__photo"
+              src="placeholder.svg"
+              width="800"
+              height="1000"
+              alt=""
+              loading="lazy"
+            />
+            <p class="voice-list__quote">
+              水温が16.1℃になると、夜中でも目が覚めます。
+            </p>
+            <p class="voice-list__person">
+              水風呂の温度管理／横浜研究棟／2021年入社
+            </p>
+          </li>
+          <li class="voice-list__item">
+            <img
+              class="voice-list__photo"
+              src="placeholder.svg"
+              width="800"
+              height="1000"
+              alt=""
+              loading="lazy"
+            />
+            <p class="voice-list__quote">この採用サイトは3回作り直しました。</p>
+            <p class="voice-list__person">Web エンジニア／本社／2024年入社</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="container">
+        <div class="apply-cta">
+          <p class="apply-cta__text">
+            まずは一度、研究棟の空気を吸いに来てください。
+          </p>
+          <a class="button" href="process.html">応募する</a>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p class="site-footer__tagline">
+          今日も、どこかの研究棟で誰かがととのっている。
+        </p>
+        <ul class="site-footer__nav">
+          <li><a href="about.html">私たちについて</a></li>
+          <li><a href="workplace.html">働く環境</a></li>
+          <li><a href="process.html">選考の流れ</a></li>
+          <li><a href="jobs.html">求人一覧</a></li>
+          <li><a href="jobs.html#category-nav">職種から探す</a></li>
+        </ul>
+        <p class="site-footer__note">
+          このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。<br />
+          <a
+            href="https://github.com/en-hisato-takeuchi/static-site-compare/blob/main/spec/README.md"
+            >写真のクレジット（GitHub）</a
+          ><br />
+          © 株式会社ロウリュ研究所
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

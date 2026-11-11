@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>選考の流れ | 株式会社ロウリュ研究所 採用サイト</title>
+    <meta
+      name="description"
+      content="応募から内定までの流れと、サウナ見学の案内です。"
+    />
+    <script>
+      document.documentElement.classList.add('js')
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="menu.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="site-header__logo" href="index.html">
+          株式会社ロウリュ研究所
+          <small>採用サイト</small>
+        </a>
+        <a class="button button--small site-header__apply" href="process.html"
+          >応募する</a
+        >
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          メニュー
+        </button>
+        <nav
+          class="site-nav"
+          id="site-nav"
+          data-open="false"
+          aria-label="サイト内"
+        >
+          <ul class="site-nav__list">
+            <li>
+              <a class="site-nav__link" href="about.html">私たちについて</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="workplace.html">働く環境</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="process.html" aria-current="page"
+                >選考の流れ</a
+              >
+            </li>
+            <li>
+              <a class="site-nav__link" href="jobs.html">求人一覧</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="jobs.html#category-nav"
+                >職種から探す</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <div class="container">
+        <header class="page-head">
+          <h1 class="page-head__title">選考の流れ</h1>
+          <p class="page-head__lead">応募から内定まで、3週間ほどかかります。</p>
+        </header>
+
+        <section class="section">
+          <h2 class="section__title">選考のステップ</h2>
+          <ol class="step-list">
+            <li class="step-list__item">
+              <h3 class="step-list__title">応募</h3>
+              <p>求人一覧から、気になる職種に応募してください。</p>
+            </li>
+            <li class="step-list__item">
+              <h3 class="step-list__title">書類選考</h3>
+              <p>1週間ほどで結果をお知らせします。</p>
+            </li>
+            <li class="step-list__item">
+              <h3 class="step-list__title">面接</h3>
+              <p>研究棟の会議室で、配属先の責任者と話します。</p>
+            </li>
+            <li class="step-list__item">
+              <h3 class="step-list__title">最終面接</h3>
+              <p>
+                最終面接はサウナで行います（任意）。服装は館内着で構いません。
+              </p>
+            </li>
+            <li class="step-list__item">
+              <h3 class="step-list__title">内定</h3>
+              <p>入社日は相談して決めます。</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="section" id="visit">
+          <h2 class="section__title">サウナ見学</h2>
+          <div class="section__body">
+            <p>
+              応募の前に、研究棟を見学できます。仕事の様子を見たあと、そのままサウナに入っていってください。
+            </p>
+          </div>
+          <img
+            class="prose-image"
+            src="placeholder.svg"
+            width="1600"
+            height="900"
+            alt=""
+            loading="lazy"
+          />
+        </section>
+
+        <section class="section">
+          <h2 class="section__title">よくある質問</h2>
+          <dl class="faq section__body">
+            <dt>サウナが苦手でも働けますか？</dt>
+            <dd>本社の職種なら、サウナ室に入る仕事はありません。</dd>
+            <dt>熱波師は未経験でも応募できますか？</dt>
+            <dd>できます。入社後3か月、タオルの振り方から研修します。</dd>
+          </dl>
+        </section>
+      </div>
+
+      <section class="container">
+        <div class="apply-cta">
+          <p class="apply-cta__text">
+            まずは一度、研究棟の空気を吸いに来てください。
+          </p>
+          <a class="button" href="process.html">応募する</a>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p class="site-footer__tagline">
+          今日も、どこかの研究棟で誰かがととのっている。
+        </p>
+        <ul class="site-footer__nav">
+          <li><a href="about.html">私たちについて</a></li>
+          <li><a href="workplace.html">働く環境</a></li>
+          <li><a href="process.html">選考の流れ</a></li>
+          <li><a href="jobs.html">求人一覧</a></li>
+          <li><a href="jobs.html#category-nav">職種から探す</a></li>
+        </ul>
+        <p class="site-footer__note">
+          このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。<br />
+          <a
+            href="https://github.com/en-hisato-takeuchi/static-site-compare/blob/main/spec/README.md"
+            >写真のクレジット（GitHub）</a
+          ><br />
+          © 株式会社ロウリュ研究所
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
