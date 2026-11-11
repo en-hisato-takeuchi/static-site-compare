@@ -1,0 +1,257 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout
+  title="私たちについて | 株式会社ロウリュ研究所 採用サイト"
+  description="ロウリュ研究所の5つの研究棟と、大事にしていることを紹介します。"
+>
+  <div class="container">
+    <header class="page-head">
+      <h1 class="page-head__title">私たちについて</h1>
+      <p class="page-head__lead">
+        温度と湿度と休憩の組み合わせを、毎日まじめに試している会社です。
+      </p>
+    </header>
+    <picture>
+      <source
+        type="image/avif"
+        srcset="
+              /images/band-about-640.avif   640w,
+              /images/band-about-1280.avif 1280w
+            "
+        sizes="(min-width: 72rem) 68rem, 100vw"
+      />
+      <source
+        type="image/webp"
+        srcset="
+              /images/band-about-640.webp   640w,
+              /images/band-about-1280.webp 1280w
+            "
+        sizes="(min-width: 72rem) 68rem, 100vw"
+      />
+      <img
+        class="photo-band"
+        src="/images/band-about-1280.jpg"
+        srcset="
+              /images/band-about-640.jpg   640w,
+              /images/band-about-1280.jpg 1280w
+            "
+        sizes="(min-width: 72rem) 68rem, 100vw"
+        width="1920"
+        height="1440"
+        alt="雪の中に建つ、木とガラスの小さなサウナ小屋"
+        loading="eager"
+        decoding="async"
+      />
+    </picture>
+
+    <section class="section">
+      <h2 class="section__title">5つの研究棟</h2>
+      <ul class="lab-list">
+        <li class="lab-list__item">
+          <picture>
+            <source
+              type="image/avif"
+              srcset="
+                    /images/lab-kanda-640.avif   640w,
+                    /images/lab-kanda-1280.avif 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcset="
+                    /images/lab-kanda-640.webp   640w,
+                    /images/lab-kanda-1280.webp 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <img
+              class="lab-list__image"
+              src="/images/lab-kanda-1280.jpg"
+              srcset="
+                    /images/lab-kanda-640.jpg   640w,
+                    /images/lab-kanda-1280.jpg 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+              width="1920"
+              height="1280"
+              alt="サウナストーンを積んだストーブのある、木のサウナ室"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <h3 class="lab-list__name">神田研究棟</h3>
+          <p class="lab-list__text">
+            最初の研究棟。サウナ室は92℃、いちばん熱い
+          </p>
+        </li>
+        <li class="lab-list__item">
+          <picture>
+            <source
+              type="image/avif"
+              srcset="
+                    /images/lab-nakano-640.avif   640w,
+                    /images/lab-nakano-1280.avif 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcset="
+                    /images/lab-nakano-640.webp   640w,
+                    /images/lab-nakano-1280.webp 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <img
+              class="lab-list__image"
+              src="/images/lab-nakano-1280.jpg"
+              srcset="
+                    /images/lab-nakano-640.jpg   640w,
+                    /images/lab-nakano-1280.jpg 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+              width="1920"
+              height="1133"
+              alt="煙突から煙が上がる、森の中のサウナ小屋"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <h3 class="lab-list__name">中野研究棟</h3>
+          <p class="lab-list__text">薪ストーブのサウナがある</p>
+        </li>
+        <li class="lab-list__item">
+          <picture>
+            <source
+              type="image/avif"
+              srcset="
+                    /images/lab-yokohama-640.avif   640w,
+                    /images/lab-yokohama-1280.avif 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcset="
+                    /images/lab-yokohama-640.webp   640w,
+                    /images/lab-yokohama-1280.webp 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <img
+              class="lab-list__image"
+              src="/images/lab-yokohama-1280.jpg"
+              srcset="
+                    /images/lab-yokohama-640.jpg   640w,
+                    /images/lab-yokohama-1280.jpg 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+              width="1536"
+              height="1920"
+              alt="海辺の岩場に建つサウナ小屋"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <h3 class="lab-list__name">横浜研究棟</h3>
+          <p class="lab-list__text">海風で外気浴ができる</p>
+        </li>
+        <li class="lab-list__item">
+          <picture>
+            <source
+              type="image/avif"
+              srcset="
+                    /images/lab-omiya-640.avif   640w,
+                    /images/lab-omiya-1280.avif 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcset="
+                    /images/lab-omiya-640.webp   640w,
+                    /images/lab-omiya-1280.webp 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <img
+              class="lab-list__image"
+              src="/images/lab-omiya-1280.jpg"
+              srcset="
+                    /images/lab-omiya-640.jpg   640w,
+                    /images/lab-omiya-1280.jpg 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+              width="1920"
+              height="1440"
+              alt="真上から見た、石張りの水風呂"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <h3 class="lab-list__name">大宮研究棟</h3>
+          <p class="lab-list__text">水風呂が3つ。13℃、16℃、20℃</p>
+        </li>
+        <li class="lab-list__item">
+          <picture>
+            <source
+              type="image/avif"
+              srcset="
+                    /images/lab-kohan-640.avif   640w,
+                    /images/lab-kohan-1280.avif 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcset="
+                    /images/lab-kohan-640.webp   640w,
+                    /images/lab-kohan-1280.webp 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+            />
+            <img
+              class="lab-list__image"
+              src="/images/lab-kohan-1280.jpg"
+              srcset="
+                    /images/lab-kohan-640.jpg   640w,
+                    /images/lab-kohan-1280.jpg 1280w
+                  "
+              sizes="(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw"
+              width="1920"
+              height="1280"
+              alt="湖のほとりに置いた樽型のサウナ"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <h3 class="lab-list__name">湖畔研究棟</h3>
+          <p class="lab-list__text">テントサウナの拠点。湖が水風呂</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">大事にしていること</h2>
+      <div class="section__body">
+        <p>
+          熱さを競わないこと。お客さまがいちばん気持ちよく出られる温度を、研究棟ごとに探し続けています。
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <section class="container">
+    <div class="apply-cta">
+      <p class="apply-cta__text">
+        まずは一度、研究棟の空気を吸いに来てください。
+      </p>
+      <a class="button" href="/process/">
+        応募する
+      </a>
+    </div>
+  </section>
+</Layout>

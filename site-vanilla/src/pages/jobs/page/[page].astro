@@ -1,0 +1,32 @@
+---
+// 求人一覧の2ページ目以降。1ページ目は /jobs/
+import type { GetStaticPaths } from 'astro'
+import JobListPage from '../../../components/JobListPage.astro'
+import { PER_PAGE, getJobs } from '../../../lib/jobs'
+
+export const getStaticPaths = (async () => {
+  const jobs = await getJobs()
+  const lastPage = Math.ceil(jobs.length / PER_PAGE)
+  return Array.from({ length: Math.max(0, lastPage - 1) }, (_, i) => {
+    const page = i + 2
+    return {
+      params: { page: String(page) },
+      props: {
+        jobs: jobs.slice((page - 1) * PER_PAGE, page * PER_PAGE),
+        totalCount: jobs.length,
+        page,
+        lastPage,
+      },
+    }
+  })
+}) satisfies GetStaticPaths
+
+const { jobs, totalCount, page, lastPage } = Astro.props
+---
+
+<JobListPage
+  jobs={jobs}
+  totalCount={totalCount}
+  page={page}
+  lastPage={lastPage}
+/>

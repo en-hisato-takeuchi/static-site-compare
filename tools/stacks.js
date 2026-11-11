@@ -8,11 +8,15 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 export const STACKS = {
   vanilla: {
     package: 'site-vanilla',
-    // Phase 2 から、build.js で求人のページを書き出す
+    // 乗り換えの分岐（#8）では Astro でビルドする
     outDir: 'site-vanilla/dist',
     port: 4001,
     // ビルドのキャッシュとして、初回のビルドの前に消すもの
-    cachePaths: [],
+    cachePaths: [
+      'site-vanilla/.astro',
+      'site-vanilla/node_modules/.astro',
+      'site-vanilla/node_modules/.vite',
+    ],
   },
   astro: {
     package: 'site-astro',

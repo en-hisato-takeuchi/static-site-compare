@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node --env-file=.env build.js"
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build"
+  },
+  "dependencies": {
+    "astro": "7.4.2"
   }
 }

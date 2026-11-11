@@ -1,0 +1,124 @@
+---
+// もとは src/_templates/job.html と build.js の詳細ページの書き出し
+import type { GetStaticPaths } from 'astro'
+import Layout from '../../layouts/Layout.astro'
+import {
+  CATEGORY_LABELS,
+  SITE_NAME,
+  formatDate,
+  getJobs,
+  toDescription,
+} from '../../lib/jobs'
+
+export const getStaticPaths = (async () => {
+  const jobs = await getJobs()
+  return jobs.map((job) => ({ params: { id: job.id }, props: { job } }))
+}) satisfies GetStaticPaths
+
+// 写真は Vanilla のときに変換して public/images に置いたものを、そのまま使う
+const CATEGORY_PHOTOS = {
+  store: {
+    name: 'category-store',
+    alt: 'サウナストーンにひしゃくで水をかけるところ',
+    width: 1280,
+    height: 1920,
+  },
+  facility: {
+    name: 'category-facility',
+    alt: '窓辺に置いたサウナストーブ',
+    width: 1920,
+    height: 1280,
+  },
+  office: {
+    name: 'category-office',
+    alt: 'ノートパソコンで仕事をする社員の手元',
+    width: 1280,
+    height: 1920,
+  },
+}
+const PHOTO_WIDTHS = [640, 1280]
+const PHOTO_SIZES = '(min-width: 50rem) 46rem, 100vw'
+
+const { job } = Astro.props
+const { data } = job
+const category = data.category[0]
+const photo = CATEGORY_PHOTOS[category]
+const srcset = (format: string) =>
+  PHOTO_WIDTHS.map((w) => `/images/${photo.name}-${w}.${format} ${w}w`).join(
+    ', ',
+  )
+const date = formatDate(data.publishedAt)
+---
+
+<Layout
+  title={`${data.title} | ${SITE_NAME}`}
+  description={toDescription(data.body)}
+  ogType="article"
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくず">
+      <ol class="breadcrumb__list">
+        <li class="breadcrumb__item">
+          <a href="/">トップ</a>
+        </li>
+        <li class="breadcrumb__item">
+          <a href="/jobs/">求人一覧</a>
+        </li>
+        <li class="breadcrumb__item" aria-current="page">
+          {data.title}
+        </li>
+      </ol>
+    </nav>
+    <article class="job-detail">
+      <h1 class="job-detail__title">{data.title}</h1>
+      <picture>
+        <source type="image/avif" srcset={srcset('avif')} sizes={PHOTO_SIZES} />
+        <source type="image/webp" srcset={srcset('webp')} sizes={PHOTO_SIZES} />
+        <img
+          class="job-detail__image"
+          src={`/images/${photo.name}-${PHOTO_WIDTHS.at(-1)}.jpg`}
+          srcset={srcset('jpg')}
+          sizes={PHOTO_SIZES}
+          width={photo.width}
+          height={photo.height}
+          alt={photo.alt}
+          loading="eager"
+          decoding="async"
+        />
+      </picture>
+      <dl class="job-summary">
+        <dt>職種カテゴリ</dt>
+        <dd>
+          <span class="category-tag">{CATEGORY_LABELS[category]}</span>
+        </dd>
+        <dt>勤務地</dt>
+        <dd>{data.location[0]}</dd>
+        <dt>雇用形態</dt>
+        <dd>{data.employmentType[0]}</dd>
+        <dt>給与</dt>
+        <dd>{data.salary}</dd>
+        <dt>公開日</dt>
+        <dd>
+          <time datetime={date.datetime}>{date.label}</time>
+        </dd>
+      </dl>
+      <section class="job-detail__section">
+        <h2 class="job-detail__heading">仕事内容</h2>
+        {/* CMS のリッチエディタの HTML をそのまま入れる */}
+        <div class="rich-text" set:html={data.body} />
+      </section>
+      <section class="job-detail__section">
+        <h2 class="job-detail__heading">応募の条件</h2>
+        <div class="section__body">
+          <p>{data.requirements}</p>
+        </div>
+      </section>
+      <div class="job-detail__actions">
+        <a class="button" href="/process/">
+          応募する
+        </a>
+        <a href="/jobs/">求人一覧に戻る</a>
+      </div>
+    </article>
+  </div>
+</Layout>
