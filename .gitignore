@@ -10,3 +10,10 @@ playwright-report/
 
 # 求人のダミーデータは件数を指定して作り直すので、リポジトリに置かない
 spec/cms/data/
+
+# 型チェックの途中結果と、Next.js が作る型定義
+*.tsbuildinfo
+next-env.d.ts
+
+# 計測結果
+reports/
