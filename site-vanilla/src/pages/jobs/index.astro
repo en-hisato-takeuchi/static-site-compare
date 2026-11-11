@@ -1,0 +1,13 @@
+---
+import JobListPage from '../../components/JobListPage.astro'
+import { PER_PAGE, getJobs } from '../../lib/jobs'
+
+const jobs = await getJobs()
+---
+
+<JobListPage
+  jobs={jobs.slice(0, PER_PAGE)}
+  totalCount={jobs.length}
+  page={1}
+  lastPage={Math.max(1, Math.ceil(jobs.length / PER_PAGE))}
+/>

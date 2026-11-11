@@ -1,0 +1,111 @@
+---
+// 各 HTML に直書きしていたヘッダーとフッターを、ここ1か所にまとめた。
+// CSS と menu.js は Vanilla のときと同じく public/ のものをそのまま読む
+interface Props {
+  title: string
+  description: string
+  // 求人詳細だけ OGP を入れる
+  ogType?: 'article'
+}
+
+const { title, description, ogType } = Astro.props
+const current = Astro.url.pathname
+const NAV = [
+  { href: '/about/', label: '私たちについて' },
+  { href: '/workplace/', label: '働く環境' },
+  { href: '/process/', label: '選考の流れ' },
+  { href: '/jobs/', label: '求人一覧' },
+]
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {ogType && (
+      <>
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={new URL(current, Astro.site)} />
+        <meta property="og:type" content={ogType} />
+      </>
+    )}
+    <script is:inline>
+      document.documentElement.classList.add('js')
+    </script>
+    <link rel="stylesheet" href="/styles.css" />
+    <script is:inline src="/menu.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      本文へ移動
+    </a>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="site-header__logo" href="/">
+          株式会社ロウリュ研究所
+          <small>採用サイト</small>
+        </a>
+        <a class="button button--small site-header__apply" href="/process/">
+          応募する
+        </a>
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          メニュー
+        </button>
+        <nav
+          class="site-nav"
+          id="site-nav"
+          data-open="false"
+          aria-label="サイト内"
+        >
+          <ul class="site-nav__list">
+            {NAV.map(({ href, label }) => (
+              <li>
+                <a
+                  class="site-nav__link"
+                  href={href}
+                  aria-current={current.startsWith(href) ? 'page' : undefined}
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p class="site-footer__tagline">
+          今日も、どこかの研究棟で誰かがととのっている。
+        </p>
+        <ul class="site-footer__nav">
+          {NAV.map(({ href, label }) => (
+            <li>
+              <a href={href}>{label}</a>
+            </li>
+          ))}
+        </ul>
+        <p class="site-footer__note">
+          このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。
+          <br />
+          <a href="https://github.com/en-hisato-takeuchi/static-site-compare/blob/main/spec/README.md">
+            写真のクレジット（GitHub）
+          </a>
+          <br />© 株式会社ロウリュ研究所
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

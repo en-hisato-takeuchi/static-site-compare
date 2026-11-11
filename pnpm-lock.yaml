@@ -73,7 +73,11 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
-  site-vanilla: {}
+  site-vanilla:
+    dependencies:
+      astro:
+        specifier: 7.4.2
+        version: 7.4.2(@types/node@26.6.5)(yaml@2.9.1)
 
 packages:
 

@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout
+  title="選考の流れ | 株式会社ロウリュ研究所 採用サイト"
+  description="応募から内定までの流れと、サウナ見学の案内です。"
+>
+  <div class="container">
+    <header class="page-head">
+      <h1 class="page-head__title">選考の流れ</h1>
+      <p class="page-head__lead">応募から内定まで、3週間ほどかかります。</p>
+    </header>
+
+    <section class="section">
+      <h2 class="section__title">選考のステップ</h2>
+      <ol class="step-list">
+        <li class="step-list__item">
+          <h3 class="step-list__title">応募</h3>
+          <p>求人一覧から、気になる職種に応募してください。</p>
+        </li>
+        <li class="step-list__item">
+          <h3 class="step-list__title">書類選考</h3>
+          <p>1週間ほどで結果をお知らせします。</p>
+        </li>
+        <li class="step-list__item">
+          <h3 class="step-list__title">面接</h3>
+          <p>研究棟の会議室で、配属先の責任者と話します。</p>
+        </li>
+        <li class="step-list__item">
+          <h3 class="step-list__title">最終面接</h3>
+          <p>最終面接はサウナで行います（任意）。服装は館内着で構いません。</p>
+        </li>
+        <li class="step-list__item">
+          <h3 class="step-list__title">内定</h3>
+          <p>入社日は相談して決めます。</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" id="visit">
+      <h2 class="section__title">サウナ見学</h2>
+      <div class="section__body">
+        <p>
+          応募の前に、研究棟を見学できます。仕事の様子を見たあと、そのままサウナに入っていってください。
+        </p>
+      </div>
+      <picture>
+        <source
+          type="image/avif"
+          srcset="
+                /images/visit-640.avif   640w,
+                /images/visit-1280.avif 1280w
+              "
+          sizes="(min-width: 50rem) 46rem, 100vw"
+        />
+        <source
+          type="image/webp"
+          srcset="
+                /images/visit-640.webp   640w,
+                /images/visit-1280.webp 1280w
+              "
+          sizes="(min-width: 50rem) 46rem, 100vw"
+        />
+        <img
+          class="prose-image"
+          src="/images/visit-1280.jpg"
+          srcset="/images/visit-640.jpg 640w, /images/visit-1280.jpg 1280w"
+          sizes="(min-width: 50rem) 46rem, 100vw"
+          width="1440"
+          height="1920"
+          alt="サウナ小屋の入口。壁にタオルが掛かっている"
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">よくある質問</h2>
+      <dl class="faq section__body">
+        <dt>サウナが苦手でも働けますか？</dt>
+        <dd>本社の職種なら、サウナ室に入る仕事はありません。</dd>
+        <dt>熱波師は未経験でも応募できますか？</dt>
+        <dd>できます。入社後3か月、タオルの振り方から研修します。</dd>
+      </dl>
+    </section>
+  </div>
+
+  <section class="container">
+    <div class="apply-cta">
+      <p class="apply-cta__text">
+        まずは一度、研究棟の空気を吸いに来てください。
+      </p>
+      <a class="button" href="/process/">
+        応募する
+      </a>
+    </div>
+  </section>
+</Layout>
