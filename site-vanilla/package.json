@@ -1,5 +1,8 @@
 {
   "name": "site-vanilla",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "build": "node --env-file=.env build.js"
+  }
 }

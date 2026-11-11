@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>%%title%%</title>
+    <meta name="description" content="%%description%%" />
+    <script>
+      document.documentElement.classList.add('js')
+    </script>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/menu.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="site-header__logo" href="/">
+          株式会社ロウリュ研究所
+          <small>採用サイト</small>
+        </a>
+        <a class="button button--small site-header__apply" href="/process/"
+          >応募する</a
+        >
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          メニュー
+        </button>
+        <nav
+          class="site-nav"
+          id="site-nav"
+          data-open="false"
+          aria-label="サイト内"
+        >
+          <ul class="site-nav__list">
+            <li>
+              <a class="site-nav__link" href="/about/">私たちについて</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="/workplace/">働く環境</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="/process/">選考の流れ</a>
+            </li>
+            <li>
+              <a class="site-nav__link" href="/jobs/" aria-current="page"
+                >求人一覧</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <div class="container">
+        <header class="page-head">
+          <h1 class="page-head__title">求人一覧</h1>
+        </header>
+        %%content%%
+      </div>
+
+      <section class="container">
+        <div class="apply-cta">
+          <p class="apply-cta__text">
+            まずは一度、研究棟の空気を吸いに来てください。
+          </p>
+          <a class="button" href="/process/">応募する</a>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p class="site-footer__tagline">
+          今日も、どこかの研究棟で誰かがととのっている。
+        </p>
+        <ul class="site-footer__nav">
+          <li><a href="/about/">私たちについて</a></li>
+          <li><a href="/workplace/">働く環境</a></li>
+          <li><a href="/process/">選考の流れ</a></li>
+          <li><a href="/jobs/">求人一覧</a></li>
+        </ul>
+        <p class="site-footer__note">
+          このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。<br />
+          <a
+            href="https://github.com/en-hisato-takeuchi/static-site-compare/blob/main/spec/README.md"
+            >写真のクレジット（GitHub）</a
+          ><br />
+          © 株式会社ロウリュ研究所
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
