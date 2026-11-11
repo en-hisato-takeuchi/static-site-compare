@@ -9,7 +9,12 @@ import mosaicSauna from '../../../spec/assets/images/mosaic-sauna.jpg'
 import ApplyCta from '../components/ApplyCta.astro'
 import Photo from '../components/Photo.astro'
 import VoiceList from '../components/VoiceList.astro'
+import JobList from '../components/JobList.astro'
 import Layout from '../layouts/Layout.astro'
+import { getJobs } from '../lib/jobs'
+
+const LATEST_COUNT = 3
+const latestJobs = (await getJobs()).slice(0, LATEST_COUNT)
 
 const CATEGORIES = [
   {
@@ -146,12 +151,22 @@ const CATEGORIES = [
             layout="third"
           />
           <div class="category-cards__body">
-            <h3 class="category-cards__title">{name}</h3>
+            <h3 class="category-cards__title">
+              <a href="/jobs/">{name}</a>
+            </h3>
             <p class="category-cards__text">{text}</p>
           </div>
         </li>
       ))}
     </ul>
+  </section>
+
+  <section class="container section">
+    <h2 class="section__title">新着の求人</h2>
+    <JobList jobs={latestJobs} level={3} />
+    <p class="section__more">
+      <a href="/jobs/">求人一覧を見る</a>
+    </p>
   </section>
 
   <section class="container section">
