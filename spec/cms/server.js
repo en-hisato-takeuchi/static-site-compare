@@ -4,7 +4,9 @@
 // GET /api/v1/jobs        一覧。limit（既定10、最大100）、offset、fields、filters に対応
 // GET /api/v1/jobs/{id}   詳細。fields に対応
 // GET /api/v1/jobs/{id}?draftKey=...  draftKey が合う下書きがあれば、公開前の求人を返す（一覧には出ない）
-// どちらも X-MICROCMS-API-KEY ヘッダーがないか違うときは 401 を返す
+// どちらも X-MICROCMS-API-KEY ヘッダーがないか違うときは 401 を返す。
+// ブラウザ用のキー（GET 権限だけ）は、GET 以外のリクエストと、下書きの一覧取得（一覧に draftKey を付ける）を 403 で拒否する。
+// ブラウザから呼べるように、CORS のヘッダーを付ける
 import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { dirname, join } from 'node:path'
@@ -16,15 +18,20 @@ const DATA_PATH = join(
   'data',
   'jobs.json',
 )
-const DRAFTS_PATH = join(
-  dirname(fileURLToPath(import.meta.url)),
-  'drafts.json',
-)
+const DRAFTS_PATH = join(dirname(fileURLToPath(import.meta.url)), 'drafts.json')
 const DEFAULT_LIMIT = 10
 const MAX_LIMIT = 100
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'X-MICROCMS-API-KEY',
+}
+
 const json = (res, status, body) => {
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' })
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    ...CORS_HEADERS,
+  })
   res.end(JSON.stringify(body))
 }
 
@@ -65,10 +72,22 @@ const toInteger = (value, fallback) => {
 
 const handle = (jobs, drafts, req, res) => {
   const url = new URL(req.url ?? '/', 'http://localhost')
-  if (req.method !== 'GET')
-    return json(res, 405, { message: 'Method not allowed.' })
-  if (req.headers['x-microcms-api-key'] !== MOCK_CMS.apiKey) {
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      ...CORS_HEADERS,
+      'Access-Control-Allow-Methods': 'GET',
+    })
+    return res.end()
+  }
+  const apiKey = req.headers['x-microcms-api-key']
+  const isBrowserKey = apiKey === MOCK_CMS.browserApiKey
+  if (apiKey !== MOCK_CMS.apiKey && !isBrowserKey) {
     return json(res, 401, { message: 'X-MICROCMS-API-KEY header is invalid.' })
+  }
+  if (req.method !== 'GET') {
+    return isBrowserKey
+      ? json(res, 403, { message: 'This API key has no write permission.' })
+      : json(res, 405, { message: 'Method not allowed.' })
   }
 
   const [, api, version, endpoint, id, ...rest] = url.pathname.split('/')
@@ -101,6 +120,11 @@ const handle = (jobs, drafts, req, res) => {
       : json(res, 404, { message: 'Content is not found.' })
   }
 
+  if (isBrowserKey && url.searchParams.has('draftKey')) {
+    return json(res, 403, {
+      message: 'This API key cannot list drafts.',
+    })
+  }
   const limit = toInteger(url.searchParams.get('limit'), DEFAULT_LIMIT)
   const offset = toInteger(url.searchParams.get('offset'), 0)
   if (Number.isNaN(limit) || Number.isNaN(offset) || limit > MAX_LIMIT) {

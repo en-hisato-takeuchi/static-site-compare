@@ -4,6 +4,8 @@ export const MOCK_CMS = {
   port: 4100,
   endpoint: 'http://127.0.0.1:4100/api/v1',
   apiKey: 'dummy-api-key',
+  // ブラウザに置く GET 権限だけのキー（CSR 版のプレビュー用）。書き込みと、下書きの一覧取得は拒否される
+  browserApiKey: 'dummy-browser-api-key',
   // 1リクエストごとに待たせる時間。ネットワークの遅さを3構成で同じにする
   latencyMs: 50,
 }
