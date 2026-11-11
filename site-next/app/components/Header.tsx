@@ -14,9 +14,9 @@ export function Header() {
           </a>
           <a
             className="button button--small site-header__apply"
-            href="/process/"
+            href="/process/#visit"
           >
-            応募する
+            まずはサウナ見学から
           </a>
           <SiteNav />
         </div>

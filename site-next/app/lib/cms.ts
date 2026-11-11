@@ -39,18 +39,22 @@ const request = async <T>(path: string): Promise<T> => {
   return response.json()
 }
 
-export const getJobs = (limit: number, offset = 0) =>
-  request<ListResponse<Job>>(`/jobs?limit=${limit}&offset=${offset}`)
+// category を渡すと、その職種カテゴリの求人だけを取る
+export const getJobs = (limit: number, offset = 0, category?: Category) =>
+  request<ListResponse<Job>>(
+    `/jobs?limit=${limit}&offset=${offset}${category ? `&filters=category[contains]${category}` : ''}`,
+  )
 
 export const getJob = (id: string) => request<Job>(`/jobs/${id}`)
 
-export const getAllJobIds = async () => {
-  const ids: string[] = []
+// 新しい URL（/jobs/{category}/{id}/）を作るのに要る、ID と職種カテゴリだけを全件取る
+export const getAllJobKeys = async () => {
+  const keys: Pick<Job, 'id' | 'category'>[] = []
   for (let offset = 0; ; offset += API_LIMIT) {
     const { contents, totalCount } = await request<
-      ListResponse<Pick<Job, 'id'>>
-    >(`/jobs?limit=${API_LIMIT}&offset=${offset}&fields=id`)
-    ids.push(...contents.map(({ id }) => id))
-    if (ids.length >= totalCount) return ids
+      ListResponse<Pick<Job, 'id' | 'category'>>
+    >(`/jobs?limit=${API_LIMIT}&offset=${offset}&fields=id,category`)
+    keys.push(...contents)
+    if (keys.length >= totalCount) return keys
   }
 }
