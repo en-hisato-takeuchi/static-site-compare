@@ -45,7 +45,8 @@ export const PAGES = [
   '/workplace/',
   '/process/',
   '/jobs/',
-  ...(JOBS.length > 0 ? [`/jobs/${JOBS[0].id}/`] : []),
+  '/jobs/store/',
+  ...(JOBS.length > 0 ? [`/jobs/${JOBS[0].category[0]}/${JOBS[0].id}/`] : []),
 ]
 
 export const stackNames = Object.keys(STACKS)

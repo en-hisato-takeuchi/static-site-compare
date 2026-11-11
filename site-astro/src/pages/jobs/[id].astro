@@ -1,95 +1,16 @@
 ---
+// 旧 URL（/jobs/{id}/）。新 URL（/jobs/{category}/{id}/）への対応は CMS のデータから作る。
+// 静的出力では、Astro.redirect は meta refresh で転送する HTML になる
 import type { GetStaticPaths } from 'astro'
-import categoryFacility from '../../../../spec/assets/images/category-facility.jpg'
-import categoryOffice from '../../../../spec/assets/images/category-office.jpg'
-import categoryStore from '../../../../spec/assets/images/category-store.jpg'
-import JobDate from '../../components/JobDate.astro'
-import Photo from '../../components/Photo.astro'
-import Layout from '../../layouts/Layout.astro'
-import { CATEGORY_LABELS, getJobs, toDescription } from '../../lib/jobs'
+import { getJobs, jobUrl } from '../../lib/jobs'
 
 export const getStaticPaths = (async () => {
   const jobs = await getJobs()
-  return jobs.map((job) => ({ params: { id: job.id }, props: { job } }))
+  return jobs.map((job) => ({
+    params: { id: job.id },
+    props: { to: jobUrl(job) },
+  }))
 }) satisfies GetStaticPaths
 
-// 求人データに写真は持たせず、職種カテゴリの写真を使う
-const CATEGORY_PHOTOS = {
-  store: {
-    src: categoryStore,
-    alt: 'サウナストーンにひしゃくで水をかけるところ',
-  },
-  facility: { src: categoryFacility, alt: '窓辺に置いたサウナストーブ' },
-  office: { src: categoryOffice, alt: 'ノートパソコンで仕事をする社員の手元' },
-}
-
-const { job } = Astro.props
-const { data } = job
-const category = data.category[0]
-const photo = CATEGORY_PHOTOS[category]
+return Astro.redirect(Astro.props.to, 301)
 ---
-
-<Layout
-  title={data.title}
-  description={toDescription(data.body)}
-  ogType="article"
->
-  <div class="container">
-    <nav class="breadcrumb" aria-label="パンくず">
-      <ol class="breadcrumb__list">
-        <li class="breadcrumb__item">
-          <a href="/">トップ</a>
-        </li>
-        <li class="breadcrumb__item">
-          <a href="/jobs/">求人一覧</a>
-        </li>
-        <li class="breadcrumb__item" aria-current="page">
-          {data.title}
-        </li>
-      </ol>
-    </nav>
-    <article class="job-detail">
-      <h1 class="job-detail__title">{data.title}</h1>
-      <Photo
-        src={photo.src}
-        alt={photo.alt}
-        class="job-detail__image"
-        layout="prose"
-        eager
-      />
-      <dl class="job-summary">
-        <dt>職種カテゴリ</dt>
-        <dd>
-          <span class="category-tag">{CATEGORY_LABELS[category]}</span>
-        </dd>
-        <dt>勤務地</dt>
-        <dd>{data.location[0]}</dd>
-        <dt>雇用形態</dt>
-        <dd>{data.employmentType[0]}</dd>
-        <dt>給与</dt>
-        <dd>{data.salary}</dd>
-        <dt>公開日</dt>
-        <dd>
-          <JobDate date={data.publishedAt} />
-        </dd>
-      </dl>
-      <section class="job-detail__section">
-        <h2 class="job-detail__heading">仕事内容</h2>
-        {/* CMS のリッチエディタの HTML をそのまま入れる */}
-        <div class="rich-text" set:html={data.body} />
-      </section>
-      <section class="job-detail__section">
-        <h2 class="job-detail__heading">応募の条件</h2>
-        <div class="section__body">
-          <p>{data.requirements}</p>
-        </div>
-      </section>
-      <div class="job-detail__actions">
-        <a class="button" href="/process/">
-          応募する
-        </a>
-        <a href="/jobs/">求人一覧に戻る</a>
-      </div>
-    </article>
-  </div>
-</Layout>

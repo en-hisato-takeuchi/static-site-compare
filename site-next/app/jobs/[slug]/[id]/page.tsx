@@ -1,15 +1,18 @@
 import type { Metadata } from 'next'
-import { JobDate } from '../../components/JobDate'
-import { Photo, type PhotoName } from '../../components/Photo'
-import { type Category, getAllJobIds, getJob } from '../../lib/cms'
+import { JobDate } from '../../../components/JobDate'
+import { Photo, type PhotoName } from '../../../components/Photo'
+import { type Category, getAllJobKeys, getJob } from '../../../lib/cms'
 import { notFound } from 'next/navigation'
 import {
   CATEGORY_LABELS,
   PLACEHOLDER_PARAM,
+  jobUrl,
   toDescription,
-} from '../../lib/jobs'
+} from '../../../lib/jobs'
 
-type Params = { id: string }
+// Next.js では、同じ階層の動的なセグメントに別の名前を付けられない。
+// /jobs/{category}/ と旧 URL の /jobs/{id}/ が同じ [slug] を使うので、ここでも slug が職種カテゴリになる
+type Params = { slug: string; id: string }
 
 const SITE_NAME = '株式会社ロウリュ研究所 採用サイト'
 
@@ -30,10 +33,10 @@ const CATEGORY_PHOTOS: Record<Category, { name: PhotoName; alt: string }> = {
 export const dynamicParams = false
 
 export async function generateStaticParams(): Promise<Params[]> {
-  const ids = await getAllJobIds()
-  return ids.length > 0
-    ? ids.map((id) => ({ id }))
-    : [{ id: PLACEHOLDER_PARAM }]
+  const keys = await getAllJobKeys()
+  return keys.length > 0
+    ? keys.map((job) => ({ slug: job.category[0], id: job.id }))
+    : [{ slug: PLACEHOLDER_PARAM, id: PLACEHOLDER_PARAM }]
 }
 
 export async function generateMetadata({
@@ -51,7 +54,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${job.title} | ${SITE_NAME}`,
       description,
-      url: `/jobs/${id}/`,
+      url: jobUrl(job),
       type: 'article',
     },
   }
@@ -77,6 +80,9 @@ export default async function JobDetail({
           </li>
           <li className="breadcrumb__item">
             <a href="/jobs/">求人一覧</a>
+          </li>
+          <li className="breadcrumb__item">
+            <a href={`/jobs/${category}/`}>{CATEGORY_LABELS[category]}</a>
           </li>
           <li className="breadcrumb__item" aria-current="page">
             {job.title}
@@ -123,8 +129,8 @@ export default async function JobDetail({
           </div>
         </section>
         <div className="job-detail__actions">
-          <a className="button" href="/process/">
-            応募する
+          <a className="button" href="/process/#visit">
+            まずはサウナ見学から
           </a>
           <a href="/jobs/">求人一覧に戻る</a>
         </div>

@@ -4,7 +4,7 @@ import { ApplyCta } from './components/ApplyCta'
 import { JobList } from './components/JobList'
 import { Photo, type PhotoName } from './components/Photo'
 import { VoiceList } from './components/VoiceList'
-import { getJobs } from './lib/cms'
+import { type Category, getJobs } from './lib/cms'
 
 const LATEST_COUNT = 3
 
@@ -14,24 +14,28 @@ export const metadata: Metadata = {
 }
 
 const CATEGORIES: {
+  slug: Category
   name: string
   text: string
   photo: PhotoName
   alt: string
 }[] = [
   {
+    slug: 'store',
     name: '店舗スタッフ',
     text: '熱波師、ロウリュ担当、休憩処スタッフ。お客さまのいちばん近くで、温度を届けます。',
     photo: 'category-store',
     alt: 'サウナストーンにひしゃくで水をかけるところ',
   },
   {
+    slug: 'facility',
     name: '施設管理',
     text: '水風呂の温度管理、サウナストーブの保守、テントサウナの設営。研究棟の環境を守ります。',
     photo: 'category-facility',
     alt: '窓辺に置いたサウナストーブ',
   },
   {
+    slug: 'office',
     name: '本社',
     text: '新店舗の開発、広報、Web エンジニア。次の研究棟と、ここまでの道のりをつくります。',
     photo: 'category-office',
@@ -63,8 +67,8 @@ export default async function Home() {
             <p className="hero__lead">
               都市の5つの研究棟で、ととのいを研究し、届ける仲間を募集しています。
             </p>
-            <a className="button" href="/process/">
-              応募する
+            <a className="button" href="/process/#visit">
+              まずはサウナ見学から
             </a>
           </div>
         </div>
@@ -154,7 +158,7 @@ export default async function Home() {
       <section className="container section">
         <h2 className="section__title">3つの仕事</h2>
         <ul className="category-cards">
-          {CATEGORIES.map(({ name, text, photo, alt }) => (
+          {CATEGORIES.map(({ slug, name, text, photo, alt }) => (
             <li className="category-cards__item" key={name}>
               <Photo
                 name={photo}
@@ -164,7 +168,7 @@ export default async function Home() {
               />
               <div className="category-cards__body">
                 <h3 className="category-cards__title">
-                  <a href="/jobs/">{name}</a>
+                  <a href={`/jobs/${slug}/`}>{name}</a>
                 </h3>
                 <p className="category-cards__text">{text}</p>
               </div>

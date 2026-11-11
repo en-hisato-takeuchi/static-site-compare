@@ -1,5 +1,5 @@
 import type { Job } from '../lib/cms'
-import { CATEGORY_LABELS } from '../lib/jobs'
+import { CATEGORY_LABELS, jobUrl } from '../lib/jobs'
 import { JobDate } from './JobDate'
 
 type Props = {
@@ -18,7 +18,7 @@ export function JobList({ jobs, level }: Props) {
       {jobs.map((job) => (
         <li className="job-list__item" key={job.id}>
           <Heading className="job-list__title">
-            <a href={`/jobs/${job.id}/`}>{job.title}</a>
+            <a href={jobUrl(job)}>{job.title}</a>
           </Heading>
           <dl className="job-list__meta">
             <dt>職種カテゴリ</dt>

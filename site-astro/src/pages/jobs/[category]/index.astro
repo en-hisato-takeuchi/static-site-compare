@@ -1,0 +1,37 @@
+---
+// 職種カテゴリ別の一覧の1ページ目
+import type { GetStaticPaths } from 'astro'
+import JobListPage from '../../../components/JobListPage.astro'
+import {
+  CATEGORY_LABELS,
+  type Category,
+  PER_PAGE,
+  getJobs,
+} from '../../../lib/jobs'
+
+export const getStaticPaths = (async () => {
+  const jobs = await getJobs()
+  return (Object.keys(CATEGORY_LABELS) as Category[]).map((category) => {
+    const categoryJobs = jobs.filter((job) => job.data.category[0] === category)
+    return {
+      params: { category },
+      props: {
+        category,
+        jobs: categoryJobs.slice(0, PER_PAGE),
+        totalCount: categoryJobs.length,
+        lastPage: Math.max(1, Math.ceil(categoryJobs.length / PER_PAGE)),
+      },
+    }
+  })
+}) satisfies GetStaticPaths
+
+const { category, jobs, totalCount, lastPage } = Astro.props
+---
+
+<JobListPage
+  category={category}
+  jobs={jobs}
+  totalCount={totalCount}
+  page={1}
+  lastPage={lastPage}
+/>

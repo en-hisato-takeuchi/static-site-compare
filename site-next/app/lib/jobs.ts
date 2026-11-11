@@ -1,4 +1,4 @@
-import type { Category } from './cms'
+import type { Category, Job } from './cms'
 
 export const PER_PAGE = 10
 
@@ -8,8 +8,20 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   office: '本社',
 }
 
-export const pageUrl = (page: number) =>
-  page === 1 ? '/jobs/' : `/jobs/page/${page}/`
+export const CATEGORIES = Object.keys(CATEGORY_LABELS) as Category[]
+
+export const isCategory = (slug: string): slug is Category =>
+  (CATEGORIES as string[]).includes(slug)
+
+export const jobUrl = (job: Pick<Job, 'id' | 'category'>) =>
+  `/jobs/${job.category[0]}/${job.id}/`
+
+// category を渡さないときは、すべての職種の一覧
+export const listUrl = (category?: Category) =>
+  category ? `/jobs/${category}/` : '/jobs/'
+
+export const pageUrl = (page: number, category?: Category) =>
+  page === 1 ? listUrl(category) : `${listUrl(category)}page/${page}/`
 
 // output: 'export' では generateStaticParams が空の配列を返すとビルドが止まる。
 // 作るページがないときはこの仮の値を1つ返し、ページ側で notFound() にする

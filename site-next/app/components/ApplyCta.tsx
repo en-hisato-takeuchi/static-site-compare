@@ -5,8 +5,8 @@ export function ApplyCta() {
         <p className="apply-cta__text">
           まずは一度、研究棟の空気を吸いに来てください。
         </p>
-        <a className="button" href="/process/">
-          応募する
+        <a className="button" href="/process/#visit">
+          まずはサウナ見学から
         </a>
       </div>
     </section>

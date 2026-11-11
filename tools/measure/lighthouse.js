@@ -1,5 +1,6 @@
 // Lighthouse CI で各ページを5回ずつ測り、指標ごとの中央値を出す。
-// 使い方：node tools/measure/lighthouse.js [構成の名前...] [--runs 5]
+// 使い方：node tools/measure/lighthouse.js [構成の名前...] [--runs 5] [--pages /jobs/,/jobs/store/]
+// --pages を付けないときは、tools/stacks.js の PAGES をすべて測る
 // 設定は Lighthouse の既定（モバイルの画面サイズと、通信・CPU の速度を落とした想定）のまま使う。
 // 配信は E2E と同じ tools/serve.js。Chrome は PC に入っているものを使う（CHROME_PATH で変えられる）
 import { spawn } from 'node:child_process'
@@ -22,10 +23,14 @@ const LHCI_DIR = join(ROOT, '.lighthouseci')
 const LHCI_BIN = join(ROOT, 'node_modules', '.bin', 'lhci')
 
 const { values, positionals } = parseArgs({
-  options: { runs: { type: 'string', default: String(DEFAULT_RUNS) } },
+  options: {
+    runs: { type: 'string', default: String(DEFAULT_RUNS) },
+    pages: { type: 'string' },
+  },
   allowPositionals: true,
 })
 const runs = Number(values.runs)
+const pages = values.pages ? values.pages.split(',') : PAGES
 
 const collect = (urls) =>
   new Promise((resolve, reject) => {
@@ -89,13 +94,13 @@ for (const stack of stacksFromArgs(positionals)) {
   await rm(LHCI_DIR, { recursive: true, force: true })
   const { server, url } = await startServer(stack.name)
   try {
-    await collect(PAGES.map((path) => `${url}${path}`))
+    await collect(pages.map((path) => `${url}${path}`))
   } finally {
     server.close()
   }
   const lhrs = await readResults()
   results[stack.name] = Object.fromEntries(
-    PAGES.map((path) => [
+    pages.map((path) => [
       path,
       summarize(
         lhrs.filter((lhr) => new URL(lhr.requestedUrl).pathname === path),
