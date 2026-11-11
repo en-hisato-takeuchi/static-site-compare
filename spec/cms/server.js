@@ -3,6 +3,7 @@
 //
 // GET /api/v1/jobs        一覧。limit（既定10、最大100）、offset、fields、filters に対応
 // GET /api/v1/jobs/{id}   詳細。fields に対応
+// GET /api/v1/jobs/{id}?draftKey=...  draftKey が合う下書きがあれば、公開前の求人を返す（一覧には出ない）
 // どちらも X-MICROCMS-API-KEY ヘッダーがないか違うときは 401 を返す
 import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
@@ -14,6 +15,10 @@ const DATA_PATH = join(
   dirname(fileURLToPath(import.meta.url)),
   'data',
   'jobs.json',
+)
+const DRAFTS_PATH = join(
+  dirname(fileURLToPath(import.meta.url)),
+  'drafts.json',
 )
 const DEFAULT_LIMIT = 10
 const MAX_LIMIT = 100
@@ -58,7 +63,7 @@ const toInteger = (value, fallback) => {
   return Number.isInteger(number) && number >= 0 ? number : NaN
 }
 
-const handle = (jobs, req, res) => {
+const handle = (jobs, drafts, req, res) => {
   const url = new URL(req.url ?? '/', 'http://localhost')
   if (req.method !== 'GET')
     return json(res, 405, { message: 'Method not allowed.' })
@@ -78,6 +83,18 @@ const handle = (jobs, req, res) => {
 
   const fields = url.searchParams.get('fields')
   if (id) {
+    const draftKey = url.searchParams.get('draftKey')
+    if (draftKey !== null) {
+      // 下書きは、id と draftKey の両方が合うときだけ返す
+      const draft = drafts.find(
+        (item) => item.id === id && item.draftKey === draftKey,
+      )
+      if (!draft) return json(res, 404, { message: 'Content is not found.' })
+      const content = Object.fromEntries(
+        Object.entries(draft).filter(([key]) => key !== 'draftKey'),
+      )
+      return json(res, 200, pickFields(content, fields))
+    }
     const job = jobs.find((item) => item.id === id)
     return job
       ? json(res, 200, pickFields(job, fields))
@@ -115,8 +132,9 @@ export const startMockCms = async () => {
       )
     }),
   )
+  const drafts = JSON.parse(await readFile(DRAFTS_PATH, 'utf-8'))
   const server = createServer((req, res) => {
-    setTimeout(() => handle(jobs, req, res), MOCK_CMS.latencyMs)
+    setTimeout(() => handle(jobs, drafts, req, res), MOCK_CMS.latencyMs)
   })
   await new Promise((resolve) =>
     server.listen(MOCK_CMS.port, '127.0.0.1', resolve),
