@@ -380,6 +380,8 @@ dd {
   left: var(--at);
   /* 両端の目盛りが枠からはみ出さないよう、位置に合わせてずらす量を変える */
   transform: translateX(calc(-1 * var(--at)));
+  /* 右端に置くと使える幅が0になり、1文字ずつ折り返すので止める */
+  white-space: nowrap;
   display: flex;
   flex-direction: column;
   align-items: center;
