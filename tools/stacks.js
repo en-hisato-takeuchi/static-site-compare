@@ -11,6 +11,8 @@ export const STACKS = {
     // Phase 2 から、build.js で求人のページを書き出す
     outDir: 'site-vanilla/dist',
     port: 4001,
+    // プレビュー（/jobs/preview/）だけ、リクエストのたびにこの関数が HTML を返す
+    preview: { module: 'site-vanilla/preview.js', export: 'handlePreview' },
     // ビルドのキャッシュとして、初回のビルドの前に消すもの
     cachePaths: [],
   },
@@ -48,6 +50,9 @@ export const PAGES = [
   '/jobs/store/',
   ...(JOBS.length > 0 ? [`/jobs/${JOBS[0].category[0]}/${JOBS[0].id}/`] : []),
 ]
+
+// プレビューのページの URL。静的な HTML では作れず、リクエストのたびにサーバーで組み立てる
+export const PREVIEW_PATH = '/jobs/preview/'
 
 export const stackNames = Object.keys(STACKS)
 

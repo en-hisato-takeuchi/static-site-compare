@@ -16,10 +16,7 @@ const DATA_PATH = join(
   'data',
   'jobs.json',
 )
-const DRAFTS_PATH = join(
-  dirname(fileURLToPath(import.meta.url)),
-  'drafts.json',
-)
+const DRAFTS_PATH = join(dirname(fileURLToPath(import.meta.url)), 'drafts.json')
 const DEFAULT_LIMIT = 10
 const MAX_LIMIT = 100
 
