@@ -15,3 +15,12 @@ export const DRAFT_PREVIEW = {
   id: 'dr4ftsample',
   draftKey: 'dummy-draft-key',
 }
+
+// ビルドに渡す、ブラウザに置く値（GET 権限だけのキーと、疑似 CMS の接続先）。公開してよい値。
+// 構成ごとの「ブラウザに出す環境変数」の名前で渡す（Vanilla は接頭辞なし）
+export const BROWSER_ENV = Object.fromEntries(
+  ['', 'PUBLIC_', 'NEXT_PUBLIC_'].flatMap((prefix) => [
+    [`${prefix}MICROCMS_BROWSER_API_ENDPOINT`, MOCK_CMS.endpoint],
+    [`${prefix}MICROCMS_BROWSER_API_KEY`, MOCK_CMS.browserApiKey],
+  ]),
+)

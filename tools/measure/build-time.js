@@ -8,6 +8,7 @@ import { readFile, rm } from 'node:fs/promises'
 import { delimiter, join } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { parseArgs } from 'node:util'
+import { BROWSER_ENV } from '../../spec/cms/config.js'
 import { startMockCms } from '../../spec/cms/server.js'
 import { ROOT } from '../stacks.js'
 import {
@@ -39,6 +40,7 @@ const run = (command, cwd) =>
       stdio: ['ignore', 'ignore', 'pipe'],
       env: {
         ...process.env,
+        ...BROWSER_ENV,
         PATH: [join(cwd, 'node_modules', '.bin'), process.env.PATH].join(
           delimiter,
         ),
