@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",
-    "build": "NEXT_TELEMETRY_DISABLED=1 next build"
+    "build": "rm -rf .next/cache/fetch-cache && NEXT_TELEMETRY_DISABLED=1 next build"
   },
   "dependencies": {
     "next": "16.4.3",

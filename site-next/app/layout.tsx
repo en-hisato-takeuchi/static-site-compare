@@ -8,6 +8,8 @@ const SITE_NAME = '株式会社ロウリュ研究所 採用サイト'
 
 export const metadata: Metadata = {
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  // 公開先はまだないので仮の値。OGP の og:url に使う
+  metadataBase: new URL('https://example.com'),
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

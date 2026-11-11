@@ -1,0 +1,18 @@
+---
+interface Props {
+  date: Date
+}
+
+const { date } = Astro.props
+const TIME_ZONE = 'Asia/Tokyo'
+const label = new Intl.DateTimeFormat('ja-JP', {
+  dateStyle: 'long',
+  timeZone: TIME_ZONE,
+}).format(date)
+// sv-SE の書式は YYYY-MM-DD になる
+const datetime = new Intl.DateTimeFormat('sv-SE', {
+  timeZone: TIME_ZONE,
+}).format(date)
+---
+
+<time datetime={datetime}>{label}</time>

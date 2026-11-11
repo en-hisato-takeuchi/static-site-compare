@@ -1,4 +1,5 @@
 // 3構成の、配信するディレクトリと、ローカルで配るポート。E2E と計測で同じ値を使う。
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -7,8 +8,8 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 export const STACKS = {
   vanilla: {
     package: 'site-vanilla',
-    // Phase 1 はビルドしない。書いた HTML をそのまま配る
-    outDir: 'site-vanilla/public',
+    // Phase 2 から、build.js で求人のページを書き出す
+    outDir: 'site-vanilla/dist',
     port: 4001,
     // ビルドのキャッシュとして、初回のビルドの前に消すもの
     cachePaths: [],
@@ -31,8 +32,21 @@ export const STACKS = {
   },
 }
 
-// 計測するページ。フェーズが進むたびに足す
-export const PAGES = ['/', '/about/', '/workplace/', '/process/']
+// ビルドに使った求人のデータ（pnpm generate:jobs で作ったもの）。E2E の期待値に使う
+const JOBS_PATH = join(ROOT, 'spec', 'cms', 'data', 'jobs.json')
+export const JOBS = existsSync(JOBS_PATH)
+  ? JSON.parse(readFileSync(JOBS_PATH, 'utf-8'))
+  : []
+
+// 計測するページ。フェーズが進むたびに足す。求人詳細は、いちばん新しい求人で代表させる
+export const PAGES = [
+  '/',
+  '/about/',
+  '/workplace/',
+  '/process/',
+  '/jobs/',
+  ...(JOBS.length > 0 ? [`/jobs/${JOBS[0].id}/`] : []),
+]
 
 export const stackNames = Object.keys(STACKS)
 

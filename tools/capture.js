@@ -26,7 +26,7 @@ const toFileName = (path) =>
     ? 'top'
     : path === NOT_FOUND_PATH
       ? '404'
-      : path.replaceAll('/', '')
+      : path.split('/').filter(Boolean).join('-')
 
 // ページの下まで送って、遅延読み込みの画像をすべて読み込ませる
 const loadAllImages = (page) =>

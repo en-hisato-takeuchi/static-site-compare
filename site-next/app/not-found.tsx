@@ -16,6 +16,9 @@ export default function NotFound() {
         <li>
           <a href="/">トップに戻る</a>
         </li>
+        <li>
+          <a href="/jobs/">求人一覧を見る</a>
+        </li>
       </ul>
     </div>
   )

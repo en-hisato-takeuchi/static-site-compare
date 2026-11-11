@@ -1,0 +1,69 @@
+---
+// 求人一覧の1ページ分。/jobs/ と /jobs/page/{n}/ で使う
+import type { CollectionEntry } from 'astro:content'
+import { pageUrl } from '../lib/jobs'
+import Layout from '../layouts/Layout.astro'
+import ApplyCta from './ApplyCta.astro'
+import JobList from './JobList.astro'
+
+interface Props {
+  jobs: CollectionEntry<'jobs'>[]
+  totalCount: number
+  page: number
+  lastPage: number
+}
+
+const { jobs, totalCount, page, lastPage } = Astro.props
+const pages = Array.from({ length: lastPage }, (_, i) => i + 1)
+const suffix = page === 1 ? '' : `（${page}ページ目）`
+---
+
+<Layout
+  title={`求人一覧${suffix}`}
+  description={
+    page === 1
+      ? 'ロウリュ研究所で募集している職種の一覧です。'
+      : `ロウリュ研究所で募集している職種の一覧です（${page}ページ目）。`
+  }
+>
+  <div class="container">
+    <header class="page-head">
+      <h1 class="page-head__title">求人一覧</h1>
+    </header>
+    {totalCount > 0 && <p class="job-count">全{totalCount}件</p>}
+    <JobList jobs={jobs} level={2} />
+    {lastPage > 1 && (
+      <nav class="pagination" aria-label="ページ送り">
+        <ul class="pagination__list">
+          {page > 1 && (
+            <li>
+              <a class="pagination__link" href={pageUrl(page - 1)}>
+                前へ
+              </a>
+            </li>
+          )}
+          {pages.map((n) => (
+            <li>
+              <a
+                class="pagination__link"
+                href={pageUrl(n)}
+                aria-current={n === page ? 'page' : undefined}
+              >
+                {n}
+              </a>
+            </li>
+          ))}
+          {page < lastPage && (
+            <li>
+              <a class="pagination__link" href={pageUrl(page + 1)}>
+                次へ
+              </a>
+            </li>
+          )}
+        </ul>
+      </nav>
+    )}
+  </div>
+
+  <ApplyCta />
+</Layout>

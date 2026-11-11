@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate:jobs": "node spec/cms/generate-jobs.js",
-    "build": "pnpm --recursive --filter \"./site-*\" build",
+    "build": "node tools/with-cms.js pnpm --recursive --filter \"./site-*\" build",
     "serve": "node tools/serve.js",
     "cms": "node spec/cms/server.js",
     "e2e": "playwright test",

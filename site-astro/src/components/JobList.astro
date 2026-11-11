@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { CATEGORY_LABELS } from '../lib/jobs'
+import JobDate from './JobDate.astro'
+
+interface Props {
+  jobs: CollectionEntry<'jobs'>[]
+  // 置く場所に合わせた見出しのレベル。トップの新着は h3、求人一覧は h2
+  level: 2 | 3
+}
+
+const { jobs, level } = Astro.props
+const Heading = `h${level}`
+---
+
+{jobs.length === 0 ? (
+  <p class="empty-state">現在募集している職種はありません。</p>
+) : (
+  <ul class="job-list">
+    {jobs.map(({ id, data }) => (
+      <li class="job-list__item">
+        <Heading class="job-list__title">
+          <a href={`/jobs/${id}/`}>{data.title}</a>
+        </Heading>
+        <dl class="job-list__meta">
+          <dt>職種カテゴリ</dt>
+          <dd>
+            <span class="category-tag">
+              {CATEGORY_LABELS[data.category[0]]}
+            </span>
+          </dd>
+          <dt>勤務地</dt>
+          <dd>{data.location[0]}</dd>
+          <dt>雇用形態</dt>
+          <dd>{data.employmentType[0]}</dd>
+          <dt>給与</dt>
+          <dd>{data.salary}</dd>
+        </dl>
+        <p class="job-list__date">
+          公開日 <JobDate date={data.publishedAt} />
+        </p>
+      </li>
+    ))}
+  </ul>
+)}

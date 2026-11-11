@@ -1,8 +1,12 @@
 import type { CSSProperties } from 'react'
 import type { Metadata } from 'next'
 import { ApplyCta } from './components/ApplyCta'
+import { JobList } from './components/JobList'
 import { Photo, type PhotoName } from './components/Photo'
 import { VoiceList } from './components/VoiceList'
+import { getJobs } from './lib/cms'
+
+const LATEST_COUNT = 3
 
 export const metadata: Metadata = {
   description:
@@ -38,7 +42,8 @@ const CATEGORIES: {
 // 目盛りの位置。CSS のカスタムプロパティで渡す
 const at = (position: string) => ({ '--at': position }) as CSSProperties
 
-export default function Home() {
+export default async function Home() {
+  const { contents: latestJobs } = await getJobs(LATEST_COUNT)
   return (
     <>
       <section className="hero">
@@ -158,12 +163,22 @@ export default function Home() {
                 layout="third"
               />
               <div className="category-cards__body">
-                <h3 className="category-cards__title">{name}</h3>
+                <h3 className="category-cards__title">
+                  <a href="/jobs/">{name}</a>
+                </h3>
                 <p className="category-cards__text">{text}</p>
               </div>
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="container section">
+        <h2 className="section__title">新着の求人</h2>
+        <JobList jobs={latestJobs} level={3} />
+        <p className="section__more">
+          <a href="/jobs/">求人一覧を見る</a>
+        </p>
       </section>
 
       <section className="container section">

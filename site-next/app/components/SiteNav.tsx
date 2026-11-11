@@ -34,7 +34,7 @@ export function SiteNav() {
               <a
                 className="site-nav__link"
                 href={href}
-                aria-current={href === current ? 'page' : undefined}
+                aria-current={current.startsWith(href) ? 'page' : undefined}
               >
                 {label}
               </a>

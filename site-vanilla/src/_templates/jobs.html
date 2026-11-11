@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ページが見つかりません | 株式会社ロウリュ研究所 採用サイト</title>
-    <meta name="description" content="お探しのページは見つかりませんでした。" />
+    <title>%%title%%</title>
+    <meta name="description" content="%%description%%" />
     <script>
       document.documentElement.classList.add('js')
     </script>
@@ -46,20 +46,31 @@
             <li>
               <a class="site-nav__link" href="/process/">選考の流れ</a>
             </li>
+            <li>
+              <a class="site-nav__link" href="/jobs/" aria-current="page"
+                >求人一覧</a
+              >
+            </li>
           </ul>
         </nav>
       </div>
     </header>
     <main id="main">
-      <div class="container not-found">
-        <h1 class="not-found__title">
-          このページは、ととのいすぎて消えてしまいました。
-        </h1>
-        <p>URL が間違っているか、募集が終わったページです。</p>
-        <ul class="not-found__links">
-          <li><a href="/">トップに戻る</a></li>
-        </ul>
+      <div class="container">
+        <header class="page-head">
+          <h1 class="page-head__title">求人一覧</h1>
+        </header>
+        %%content%%
       </div>
+
+      <section class="container">
+        <div class="apply-cta">
+          <p class="apply-cta__text">
+            まずは一度、研究棟の空気を吸いに来てください。
+          </p>
+          <a class="button" href="/process/">応募する</a>
+        </div>
+      </section>
     </main>
     <footer class="site-footer">
       <div class="container">
@@ -70,6 +81,7 @@
           <li><a href="/about/">私たちについて</a></li>
           <li><a href="/workplace/">働く環境</a></li>
           <li><a href="/process/">選考の流れ</a></li>
+          <li><a href="/jobs/">求人一覧</a></li>
         </ul>
         <p class="site-footer__note">
           このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。<br />
