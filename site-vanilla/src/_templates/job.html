@@ -23,8 +23,10 @@
           株式会社ロウリュ研究所
           <small>採用サイト</small>
         </a>
-        <a class="button button--small site-header__apply" href="/process/"
-          >応募する</a
+        <a
+          class="button button--small site-header__apply"
+          href="/process/#visit"
+          >まずはサウナ見学から</a
         >
         <button
           class="site-nav__toggle"
@@ -55,6 +57,11 @@
                 >求人一覧</a
               >
             </li>
+            <li>
+              <a class="site-nav__link" href="/jobs/#category-nav"
+                >職種から探す</a
+              >
+            </li>
           </ul>
         </nav>
       </div>
@@ -65,6 +72,9 @@
           <ol class="breadcrumb__list">
             <li class="breadcrumb__item"><a href="/">トップ</a></li>
             <li class="breadcrumb__item"><a href="/jobs/">求人一覧</a></li>
+            <li class="breadcrumb__item">
+              <a href="/jobs/%%categorySlug%%/">%%category%%</a>
+            </li>
             <li class="breadcrumb__item" aria-current="page">%%jobTitle%%</li>
           </ol>
         </nav>
@@ -94,7 +104,7 @@
             </div>
           </section>
           <div class="job-detail__actions">
-            <a class="button" href="/process/">応募する</a>
+            <a class="button" href="/process/#visit">まずはサウナ見学から</a>
             <a href="/jobs/">求人一覧に戻る</a>
           </div>
         </article>
@@ -110,6 +120,7 @@
           <li><a href="/workplace/">働く環境</a></li>
           <li><a href="/process/">選考の流れ</a></li>
           <li><a href="/jobs/">求人一覧</a></li>
+          <li><a href="/jobs/#category-nav">職種から探す</a></li>
         </ul>
         <p class="site-footer__note">
           このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。<br />

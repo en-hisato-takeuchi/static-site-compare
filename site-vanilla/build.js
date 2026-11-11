@@ -1,7 +1,8 @@
 // 求人のページを CMS のデータから書き出すビルドスクリプト。
 // src/ を dist/ に写したうえで、次の3つを作る。
-// - 求人一覧（/jobs/、/jobs/page/{n}/）：src/_templates/jobs.html を使う
-// - 求人詳細（/jobs/{id}/）：src/_templates/job.html を使う
+// - 求人一覧（/jobs/、/jobs/page/{n}/）と職種カテゴリ別の一覧（/jobs/{category}/ ほか）：src/_templates/jobs.html を使う
+// - 求人詳細（/jobs/{category}/{id}/）：src/_templates/job.html を使う
+// - 旧 URL（/jobs/{id}/）から新 URL へ転送するページ
 // - トップの新着求人：src/index.html の <!-- build:latest-jobs --> を置き換える
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -110,7 +111,7 @@ const jobList = (jobs, level) => `<ul class="job-list">
 ${jobs
   .map(
     (job) => `<li class="job-list__item">
-  <h${level} class="job-list__title"><a href="/jobs/${job.id}/">${escapeHtml(job.title)}</a></h${level}>
+  <h${level} class="job-list__title"><a href="${jobUrl(job)}">${escapeHtml(job.title)}</a></h${level}>
   <dl class="job-list__meta">
     <dt>職種カテゴリ</dt>
     <dd><span class="category-tag">${CATEGORY_LABELS[job.category[0]]}</span></dd>
@@ -130,12 +131,17 @@ ${jobs
 const EMPTY_STATE =
   '<p class="empty-state">現在募集している職種はありません。</p>'
 
-const pageUrl = (page) => (page === 1 ? '/jobs/' : `/jobs/page/${page}/`)
+const jobUrl = (job) => `/jobs/${job.category[0]}/${job.id}/`
 
-const pagination = (current, last) => {
+// category が null のときは、すべての職種の一覧
+const listUrl = (category) => (category ? `/jobs/${category}/` : '/jobs/')
+const pageUrl = (page, category = null) =>
+  page === 1 ? listUrl(category) : `${listUrl(category)}page/${page}/`
+
+const pagination = (current, last, category) => {
   if (last <= 1) return ''
   const link = (page, label, isCurrent = false) =>
-    `<li><a class="pagination__link" href="${pageUrl(page)}"${isCurrent ? ' aria-current="page"' : ''}>${label}</a></li>`
+    `<li><a class="pagination__link" href="${pageUrl(page, category)}"${isCurrent ? ' aria-current="page"' : ''}>${label}</a></li>`
   const items = [
     current > 1 ? link(current - 1, '前へ') : '',
     ...Array.from({ length: last }, (_, i) =>
@@ -149,6 +155,32 @@ ${items.filter(Boolean).join('\n')}
 </ul>
 </nav>`
 }
+
+const categoryNav = (current) => {
+  const link = (category, label) =>
+    `<li><a class="category-nav__link" href="${listUrl(category)}"${category === current ? ' aria-current="page"' : ''}>${label}</a></li>`
+  return `<nav class="category-nav" id="category-nav" aria-label="職種カテゴリ">
+<ul class="category-nav__list">
+${[link(null, 'すべて'), ...Object.entries(CATEGORY_LABELS).map(([slug, label]) => link(slug, label))].join('\n')}
+</ul>
+</nav>`
+}
+
+// 旧 URL のページ。静的なファイルだけでは 301 を返せないので、meta refresh で新 URL へ送る
+const redirectPage = (to) => `<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>移動しました | ${SITE_NAME}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="${SITE_URL}${to}" />
+    <meta http-equiv="refresh" content="0; url=${to}" />
+  </head>
+  <body>
+    <p><a href="${to}">このページは移動しました</a></p>
+  </body>
+</html>
+`
 
 const picture = ({ name, alt, width, height }) => {
   const srcset = (format) =>
@@ -184,28 +216,37 @@ await writeFile(
   index.replace(/<!-- build:latest-jobs[^>]*-->/, latest),
 )
 
-// 求人一覧。0件のときも1ページ目は作る
+// 求人一覧と、職種カテゴリ別の一覧。0件のときも1ページ目は作る
 const listTemplate = await readFile(join(TEMPLATES, 'jobs.html'), 'utf-8')
-const lastPage = Math.max(1, Math.ceil(jobs.length / PER_PAGE))
-for (let page = 1; page <= lastPage; page++) {
-  const pageJobs = jobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-  const content =
-    jobs.length === 0
-      ? EMPTY_STATE
-      : `<p class="job-count">全${jobs.length}件</p>\n${jobList(pageJobs, 2)}\n${pagination(page, lastPage)}`
-  const title = page === 1 ? '求人一覧' : `求人一覧（${page}ページ目）`
-  await writePage(
-    pageUrl(page),
-    render(listTemplate, {
-      title: `${title} | ${SITE_NAME}`,
-      description: escapeHtml(
-        page === 1
-          ? 'ロウリュ研究所で募集している職種の一覧です。'
-          : `ロウリュ研究所で募集している職種の一覧です（${page}ページ目）。`,
-      ),
-      content,
-    }),
-  )
+const DESCRIPTION = 'ロウリュ研究所で募集している職種の一覧です'
+let listPages = 0
+for (const category of [null, ...Object.keys(CATEGORY_LABELS)]) {
+  const listJobs = category
+    ? jobs.filter((job) => job.category[0] === category)
+    : jobs
+  const heading = category ? `${CATEGORY_LABELS[category]}の求人` : '求人一覧'
+  const lastPage = Math.max(1, Math.ceil(listJobs.length / PER_PAGE))
+  for (let page = 1; page <= lastPage; page++) {
+    const pageJobs = listJobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+    const content =
+      listJobs.length === 0
+        ? EMPTY_STATE
+        : `<p class="job-count">全${listJobs.length}件</p>\n${jobList(pageJobs, 2)}\n${pagination(page, lastPage, category)}`
+    const suffix = page === 1 ? '' : `（${page}ページ目）`
+    await writePage(
+      pageUrl(page, category),
+      render(listTemplate, {
+        title: `${heading}${suffix} | ${SITE_NAME}`,
+        description: escapeHtml(
+          `${category ? `${CATEGORY_LABELS[category]}の、` : ''}${DESCRIPTION}${suffix}。`,
+        ),
+        heading,
+        categoryNav: categoryNav(category),
+        content,
+      }),
+    )
+    listPages += 1
+  }
 }
 
 // 求人詳細
@@ -213,14 +254,15 @@ const detailTemplate = await readFile(join(TEMPLATES, 'job.html'), 'utf-8')
 for (const job of jobs) {
   const category = job.category[0]
   await writePage(
-    `/jobs/${job.id}/`,
+    jobUrl(job),
     render(detailTemplate, {
       title: escapeHtml(`${job.title} | ${SITE_NAME}`),
       description: escapeHtml(toDescription(job.body)),
-      url: `${SITE_URL}/jobs/${job.id}/`,
+      url: `${SITE_URL}${jobUrl(job)}`,
       jobTitle: escapeHtml(job.title),
       image: picture(CATEGORY_PHOTOS[category]),
       category: CATEGORY_LABELS[category],
+      categorySlug: category,
       location: escapeHtml(job.location[0]),
       employmentType: escapeHtml(job.employmentType[0]),
       salary: escapeHtml(job.salary),
@@ -230,8 +272,10 @@ for (const job of jobs) {
       requirements: escapeHtml(job.requirements),
     }),
   )
+  // 旧 URL（/jobs/{id}/）。対応表は CMS のデータから作る
+  await writePage(`/jobs/${job.id}/`, redirectPage(jobUrl(job)))
 }
 
 console.log(
-  `求人${jobs.length}件から、一覧${lastPage}ページと詳細${jobs.length}ページを書き出しました`,
+  `求人${jobs.length}件から、一覧${listPages}ページと詳細${jobs.length}ページ、旧 URL の転送${jobs.length}ページを書き出しました`,
 )
