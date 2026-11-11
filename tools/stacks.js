@@ -32,7 +32,7 @@ export const STACKS = {
 }
 
 // 計測するページ。フェーズが進むたびに足す
-export const PAGES = ['/']
+export const PAGES = ['/', '/about/', '/workplace/', '/process/']
 
 export const stackNames = Object.keys(STACKS)
 
