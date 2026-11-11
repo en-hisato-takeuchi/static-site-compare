@@ -2,6 +2,7 @@
 // 期待値は、ビルドに使った求人のデータ（spec/cms/data/jobs.json）から決める
 import { expect, test } from '@playwright/test'
 import { JOBS } from '../tools/stacks.js'
+import { jobUrl } from './current-spec.js'
 
 const PER_PAGE = 10
 const LATEST_COUNT = 3
@@ -61,7 +62,7 @@ test('求人詳細の本文、<title>、OGP が最初の HTML に入っている
   test.skip(JOBS.length === 0, '求人がないので詳細ページはない')
   const [job] = JOBS
   // JS を動かさずに、サーバーから返ってきた HTML だけを見る
-  const response = await request.get(`/jobs/${job.id}/`)
+  const response = await request.get(jobUrl(job))
   expect(response.status()).toBe(200)
   const html = await response.text()
   const firstSentence = job.body.match(/<p>(.+?)<\/p>/)[1]
@@ -74,7 +75,7 @@ test('求人詳細の本文、<title>、OGP が最初の HTML に入っている
       new RegExp(`<meta property="${property}" content="[^"]+"`),
     )
   }
-  expect(html).toContain(`content="https://example.com/jobs/${job.id}/"`)
+  expect(html).toContain(`content="https://example.com${jobUrl(job)}"`)
 })
 
 test('存在しない ID の求人詳細は 404 になる', async ({ page }) => {

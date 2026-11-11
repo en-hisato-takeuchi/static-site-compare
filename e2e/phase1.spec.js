@@ -1,6 +1,7 @@
 // Phase 1 の受け入れ条件（spec/requirements.md）を、3構成で同じように確かめる
 import { devices, expect, test } from '@playwright/test'
 import { PAGES } from '../tools/stacks.js'
+import { APPLY_BUTTON } from './current-spec.js'
 
 const HERO_WIDTHS = ['640w', '1280w', '1920w']
 // スマホの画面。defaultBrowserType は describe の中で変えられないので外す
@@ -28,7 +29,7 @@ const chrome = (page) =>
 test('4ページすべてで、ヘッダーとフッターの内容が同じ', async ({ page }) => {
   await page.goto(PAGES[0])
   const first = await chrome(page)
-  expect(first.header.links).toContain('/process/')
+  expect(first.header.links).toContain(APPLY_BUTTON.href)
   for (const path of PAGES.slice(1)) {
     await page.goto(path)
     expect(await chrome(page), path).toEqual(first)
@@ -89,12 +90,12 @@ for (const path of PAGES) {
 
   test(`${path}：応募ボタンがヘッダーとページの中にある`, async ({ page }) => {
     await page.goto(path)
-    const buttons = page.locator('a.button', { hasText: '応募する' })
+    const buttons = page.locator('a.button', { hasText: APPLY_BUTTON.text })
     expect(await buttons.count()).toBeGreaterThanOrEqual(2)
     for (const href of await buttons.evaluateAll((links) =>
       links.map((link) => link.getAttribute('href')),
     )) {
-      expect(href).toBe('/process/')
+      expect(href).toBe(APPLY_BUTTON.href)
     }
   })
 }
