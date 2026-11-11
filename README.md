@@ -32,8 +32,14 @@ pnpm e2e                    # E2E。STACKS=astro pnpm e2e で絞れる
 pnpm measure:lighthouse     # Lighthouse（モバイル設定、各ページ5回の中央値）
 pnpm measure:size           # 出力ファイルの大きさ（種類ごと、圧縮後）
 pnpm measure:build          # ビルド時間（初回とキャッシュあり、5回ずつの中央値）
+pnpm measure:deps           # 依存パッケージの数
+pnpm capture <書き出し先>    # 各ページをスマホと PC で撮る（スライド用）
 ```
 
 結果は表で表示し、JSON を `reports/` に残す。Lighthouse は PC に入っている Chrome を使う。
+
+Vanilla と Next.js の写真は、`pnpm convert-images <書き出し先>` で `spec/assets/images` から変換したものを `public/images` に置いている。Astro はビルドのときに変換する。
+
+各フェーズのマージ時点には git のタグ（`foundation`、`phase1` など）を打っている。
 
 疑似 CMS は microCMS と同じ形（`contents` / `totalCount` / `offset` / `limit`）で返し、1リクエストごとに50ms待たせる。API キーは `spec/cms/config.js` のダミーの値で、ヘッダーがないリクエストは 401 で拒否する。
