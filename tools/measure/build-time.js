@@ -1,11 +1,14 @@
-// ビルド時間を、初回（キャッシュなし）とキャッシュありで5回ずつ測り、中央値を出す。
-// 使い方：node tools/measure/build-time.js [構成の名前...] [--runs 5]
+// ビルド時間を、初回（キャッシュなし）とキャッシュありで測り、中央値を出す。
+// 使い方：node tools/measure/build-time.js [構成の名前...] [--runs 5] [--jobs 0,10,100,500]
+// --jobs を付けると、求人のダミーデータを件数ごとに作り直して測る。付けないときは今あるデータで測る。
+// 疑似 CMS はこのスクリプトが起動する。
 // pnpm を経由すると起動の時間が混ざるので、package.json の build スクリプトをシェルで直接動かす
-import { spawn } from 'node:child_process'
+import { execFileSync, spawn } from 'node:child_process'
 import { readFile, rm } from 'node:fs/promises'
 import { delimiter, join } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { parseArgs } from 'node:util'
+import { startMockCms } from '../../spec/cms/server.js'
 import { ROOT } from '../stacks.js'
 import {
   formatMs,
@@ -16,12 +19,17 @@ import {
 } from './lib.js'
 
 const DEFAULT_RUNS = 5
+const CURRENT_DATA = 'current'
 
 const { values, positionals } = parseArgs({
-  options: { runs: { type: 'string', default: String(DEFAULT_RUNS) } },
+  options: {
+    runs: { type: 'string', default: String(DEFAULT_RUNS) },
+    jobs: { type: 'string' },
+  },
   allowPositionals: true,
 })
 const runs = Number(values.runs)
+const jobCounts = values.jobs ? values.jobs.split(',') : [CURRENT_DATA]
 
 const run = (command, cwd) =>
   new Promise((resolve, reject) => {
@@ -52,36 +60,54 @@ const timeBuild = async (command, cwd) => {
   return performance.now() - start
 }
 
-const results = {}
-for (const stack of stacksFromArgs(positionals)) {
-  const packageDir = join(ROOT, stack.package)
-  const { scripts = {} } = JSON.parse(
-    await readFile(join(packageDir, 'package.json'), 'utf-8'),
-  )
-  if (!scripts.build) {
-    results[stack.name] = { hasBuild: false, cold: [], cached: [] }
-    console.error(`${stack.name}：ビルドがないので測りません`)
-    continue
-  }
+const stacks = await Promise.all(
+  stacksFromArgs(positionals).map(async (stack) => {
+    const packageDir = join(ROOT, stack.package)
+    const { scripts = {} } = JSON.parse(
+      await readFile(join(packageDir, 'package.json'), 'utf-8'),
+    )
+    return { ...stack, packageDir, build: scripts.build }
+  }),
+)
 
-  const cold = []
-  const cached = []
-  for (let i = 0; i < runs; i++) {
-    for (const path of [stack.outDir, ...stack.cachePaths]) {
-      await rm(join(ROOT, path), { recursive: true, force: true })
-    }
-    cold.push(await timeBuild(scripts.build, packageDir))
-    cached.push(await timeBuild(scripts.build, packageDir))
-    console.error(
-      `${stack.name}：${i + 1}/${runs} 回目 初回 ${formatMs(cold.at(-1))}、キャッシュあり ${formatMs(cached.at(-1))}`,
+const results = {}
+for (const count of jobCounts) {
+  if (count !== CURRENT_DATA) {
+    execFileSync(
+      'node',
+      [join(ROOT, 'spec', 'cms', 'generate-jobs.js'), '--count', count],
+      { stdio: 'ignore' },
     )
   }
-  results[stack.name] = {
-    hasBuild: true,
-    cold,
-    cached,
-    coldMedian: median(cold),
-    cachedMedian: median(cached),
+  const { server } = await startMockCms()
+  try {
+    for (const stack of stacks) {
+      if (!stack.build) {
+        console.error(`${stack.name}：ビルドがないので測りません`)
+        continue
+      }
+      const cold = []
+      const cached = []
+      for (let i = 0; i < runs; i++) {
+        for (const path of [stack.outDir, ...stack.cachePaths]) {
+          await rm(join(ROOT, path), { recursive: true, force: true })
+        }
+        cold.push(await timeBuild(stack.build, stack.packageDir))
+        cached.push(await timeBuild(stack.build, stack.packageDir))
+        console.error(
+          `${stack.name}（求人${count}）：${i + 1}/${runs} 回目 初回 ${formatMs(cold.at(-1))}、キャッシュあり ${formatMs(cached.at(-1))}`,
+        )
+      }
+      results[stack.name] ??= {}
+      results[stack.name][count] = {
+        cold,
+        cached,
+        coldMedian: median(cold),
+        cachedMedian: median(cached),
+      }
+    }
+  } finally {
+    server.close()
   }
 }
 
@@ -89,16 +115,21 @@ console.log(
   markdownTable(
     [
       '構成',
-      'ビルド',
+      '求人',
       `初回（${runs}回の中央値）`,
       `キャッシュあり（${runs}回の中央値）`,
     ],
-    Object.entries(results).map(([name, result]) => [
-      name,
-      result.hasBuild ? 'あり' : 'なし',
-      result.hasBuild ? formatMs(result.coldMedian) : '-',
-      result.hasBuild ? formatMs(result.cachedMedian) : '-',
-    ]),
+    stacks.flatMap((stack) =>
+      jobCounts.map((count) => {
+        const result = results[stack.name]?.[count]
+        return [
+          stack.name,
+          count === CURRENT_DATA ? '今のデータ' : `${count}件`,
+          result ? formatMs(result.coldMedian) : 'ビルドなし',
+          result ? formatMs(result.cachedMedian) : 'ビルドなし',
+        ]
+      }),
+    ),
   ),
 )
 console.log(`\n${await writeReport('build-time', results)} に保存しました`)
