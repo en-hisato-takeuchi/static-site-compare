@@ -1,0 +1,39 @@
+---
+// CMS の「プレビュー」から開く、公開前の求人原稿。このページだけ、リクエストのたびにサーバーで組み立てる
+import JobDetail from '../../components/JobDetail.astro'
+import Layout from '../../layouts/Layout.astro'
+import { fetchDraft } from '../../lib/draft'
+import { toDescription } from '../../lib/jobs'
+
+export const prerender = false
+
+const id = Astro.url.searchParams.get('id')
+const draftKey = Astro.url.searchParams.get('draftKey')
+const job = id && draftKey ? await fetchDraft(id, draftKey) : null
+if (!job) Astro.response.status = 404
+---
+
+{job ? (
+  <Layout
+    title={job.title}
+    description={toDescription(job.body)}
+    ogType="article"
+    noindex
+  >
+    <p class="preview-banner">プレビュー中：この求人はまだ公開されていません</p>
+    <JobDetail job={job} />
+  </Layout>
+) : (
+  <Layout
+    title="プレビューできる求人が見つかりません"
+    description="プレビューできる求人が見つかりません。"
+    noindex
+  >
+    <div class="container">
+      <h1>プレビューできる求人が見つかりません</h1>
+      <p class="empty-state">
+        プレビューの URL が正しいか、CMS の画面から開き直してください。
+      </p>
+    </div>
+  </Layout>
+)}

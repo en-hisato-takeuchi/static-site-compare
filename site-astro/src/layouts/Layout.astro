@@ -9,10 +9,12 @@ interface Props {
   description: string
   // 求人詳細だけ OGP を入れる
   ogType?: 'article'
+  // プレビューのページだけ true
+  noindex?: boolean
 }
 
 const SITE_NAME = '株式会社ロウリュ研究所 採用サイト'
-const { title, description, ogType } = Astro.props
+const { title, description, ogType, noindex } = Astro.props
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
 const NAV = [
   { href: '/about/', label: '私たちについて' },
@@ -29,6 +31,7 @@ const NAV = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     {ogType && (
       <>
         <meta property="og:title" content={fullTitle} />

@@ -18,8 +18,10 @@ export const STACKS = {
   },
   astro: {
     package: 'site-astro',
-    outDir: 'site-astro/dist',
+    // Node アダプターを入れたので、静的なファイルは dist/client に出る（dist/server はプレビュー用）
+    outDir: 'site-astro/dist/client',
     port: 4002,
+    preview: { module: 'site-astro/dist/server/entry.mjs', export: 'handler' },
     cachePaths: [
       'site-astro/.astro',
       'site-astro/node_modules/.astro',
