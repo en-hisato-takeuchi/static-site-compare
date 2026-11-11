@@ -1,0 +1,46 @@
+---
+interface Props {
+  nav: { href: string; label: string }[]
+}
+
+const { nav } = Astro.props
+const current = Astro.url.pathname
+---
+
+<a class="skip-link" href="#main">
+  本文へ移動
+</a>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__logo" href="/">
+      株式会社ロウリュ研究所
+      <small>採用サイト</small>
+    </a>
+    <a class="button button--small site-header__apply" href="/process/">
+      応募する
+    </a>
+    <button
+      class="site-nav__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      メニュー
+    </button>
+    <nav class="site-nav" id="site-nav" data-open="false" aria-label="サイト内">
+      <ul class="site-nav__list">
+        {nav.map(({ href, label }) => (
+          <li>
+            <a
+              class="site-nav__link"
+              href={href}
+              aria-current={href === current ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

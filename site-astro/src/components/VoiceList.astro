@@ -1,0 +1,37 @@
+---
+import voiceBucket from '../../../spec/assets/images/voice-bucket.jpg'
+import voiceLaptop from '../../../spec/assets/images/voice-laptop.jpg'
+import voiceTowel from '../../../spec/assets/images/voice-towel.jpg'
+import Photo from './Photo.astro'
+
+const VOICES = [
+  {
+    quote: '入社理由は、ととのったからです。',
+    person: '熱波師／神田研究棟／2023年入社',
+    photo: voiceTowel,
+    alt: 'サウナ室のベンチに掛けたタオル',
+  },
+  {
+    quote: '水温が16.1℃になると、夜中でも目が覚めます。',
+    person: '水風呂の温度管理／横浜研究棟／2021年入社',
+    photo: voiceBucket,
+    alt: '沢の水を引き込んだ水風呂',
+  },
+  {
+    quote: 'この採用サイトは3回作り直しました。',
+    person: 'Web エンジニア／本社／2024年入社',
+    photo: voiceLaptop,
+    alt: '机の上のノートパソコンとコーヒー',
+  },
+]
+---
+
+<ul class="voice-list">
+  {VOICES.map(({ quote, person, photo, alt }) => (
+    <li class="voice-list__item">
+      <Photo src={photo} alt={alt} class="voice-list__photo" layout="third" />
+      <p class="voice-list__quote">{quote}</p>
+      <p class="voice-list__person">{person}</p>
+    </li>
+  ))}
+</ul>

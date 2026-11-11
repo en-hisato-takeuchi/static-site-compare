@@ -1,0 +1,58 @@
+---
+import bandWorkplace from '../../../spec/assets/images/band-workplace.jpg'
+import ApplyCta from '../components/ApplyCta.astro'
+import Photo from '../components/Photo.astro'
+import VoiceList from '../components/VoiceList.astro'
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout
+  title="働く環境"
+  description="福利厚生と、研究棟で働く社員の声を紹介します。"
+>
+  <div class="container">
+    <header class="page-head">
+      <h1 class="page-head__title">働く環境</h1>
+      <p class="page-head__lead">
+        熱い場所で働くからこそ、休み方はまじめに決めています。
+      </p>
+    </header>
+    <Photo
+      src={bandWorkplace}
+      alt="湖の桟橋に置いた、白樺の枝の束（ヴィヒタ）"
+      class="photo-band"
+      layout="wide"
+    />
+
+    <section class="section">
+      <h2 class="section__title">福利厚生</h2>
+      <div class="section__body">
+        <ul>
+          <li>全研究棟のサウナが入り放題（業務時間外に限る）</li>
+          <li>年に1回、フィンランド研修の抽選あり</li>
+          <li>タオルと館内着は会社が洗います</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">社員の声</h2>
+      <VoiceList />
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">一日の流れ（熱波師の場合）</h2>
+      <div class="section__body">
+        <ol>
+          <li>9:30 出勤。サウナ室の温度と湿度を記録する</li>
+          <li>10:00 開店。1回目の熱波</li>
+          <li>13:00 休憩。社員はまかないのサウナ飯</li>
+          <li>15:00〜19:00 2〜4回目の熱波</li>
+          <li>19:30 退勤。業務時間外なので、ここからはサウナに入ってよい</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <ApplyCta />
+</Layout>

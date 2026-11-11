@@ -1,0 +1,94 @@
+---
+import bandAbout from '../../../spec/assets/images/band-about.jpg'
+import labKanda from '../../../spec/assets/images/lab-kanda.jpg'
+import labKohan from '../../../spec/assets/images/lab-kohan.jpg'
+import labNakano from '../../../spec/assets/images/lab-nakano.jpg'
+import labOmiya from '../../../spec/assets/images/lab-omiya.jpg'
+import labYokohama from '../../../spec/assets/images/lab-yokohama.jpg'
+import ApplyCta from '../components/ApplyCta.astro'
+import Photo from '../components/Photo.astro'
+import Layout from '../layouts/Layout.astro'
+
+const LABS = [
+  {
+    name: '神田研究棟',
+    text: '最初の研究棟。サウナ室は92℃、いちばん熱い',
+    photo: labKanda,
+    alt: 'サウナストーンを積んだストーブのある、木のサウナ室',
+  },
+  {
+    name: '中野研究棟',
+    text: '薪ストーブのサウナがある',
+    photo: labNakano,
+    alt: '煙突から煙が上がる、森の中のサウナ小屋',
+  },
+  {
+    name: '横浜研究棟',
+    text: '海風で外気浴ができる',
+    photo: labYokohama,
+    alt: '海辺の岩場に建つサウナ小屋',
+  },
+  {
+    name: '大宮研究棟',
+    text: '水風呂が3つ。13℃、16℃、20℃',
+    photo: labOmiya,
+    alt: '真上から見た、石張りの水風呂',
+  },
+  {
+    name: '湖畔研究棟',
+    text: 'テントサウナの拠点。湖が水風呂',
+    photo: labKohan,
+    alt: '湖のほとりに置いた樽型のサウナ',
+  },
+]
+---
+
+<Layout
+  title="私たちについて"
+  description="ロウリュ研究所の5つの研究棟と、大事にしていることを紹介します。"
+>
+  <div class="container">
+    <header class="page-head">
+      <h1 class="page-head__title">私たちについて</h1>
+      <p class="page-head__lead">
+        温度と湿度と休憩の組み合わせを、毎日まじめに試している会社です。
+      </p>
+    </header>
+    <Photo
+      src={bandAbout}
+      alt="雪の中に建つ、木とガラスの小さなサウナ小屋"
+      class="photo-band"
+      layout="wide"
+      eager
+    />
+
+    <section class="section">
+      <h2 class="section__title">5つの研究棟</h2>
+      <ul class="lab-list">
+        {LABS.map(({ name, text, photo, alt }) => (
+          <li class="lab-list__item">
+            <Photo
+              src={photo}
+              alt={alt}
+              class="lab-list__image"
+              layout="third"
+            />
+            <h3 class="lab-list__name">{name}</h3>
+            <p class="lab-list__text">{text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">大事にしていること</h2>
+      <div class="section__body">
+        <p>
+          熱さを競わないこと。お客さまがいちばん気持ちよく出られる温度を、研究棟ごとに探し続けています。
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <ApplyCta />
+</Layout>
