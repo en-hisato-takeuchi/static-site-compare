@@ -1,0 +1,9 @@
+node_modules/
+dist/
+out/
+.next/
+.astro/
+.lighthouseci/
+test-results/
+playwright-report/
+.DS_Store
