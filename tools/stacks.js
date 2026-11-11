@@ -30,8 +30,22 @@ export const STACKS = {
   },
   next: {
     package: 'site-next',
-    outDir: 'site-next/out',
+    // output: 'export' をやめたので、静的な書き出しはない。ビルドの結果は .next にあり、next start で配る
+    outDir: 'site-next/.next',
     port: 4003,
+    start: {
+      cwd: 'site-next',
+      args: ['node_modules/next/dist/bin/next', 'start', '-p', '4003'],
+    },
+    // 利用者に届くファイル（サイズの計測の対象）。サーバー側のコードは含めない
+    served: [
+      { dir: 'site-next/.next/static' },
+      { dir: 'site-next/public' },
+      {
+        dir: 'site-next/.next/server/app',
+        include: (file) => file.endsWith('.html') || file.endsWith('.rsc'),
+      },
+    ],
     cachePaths: ['site-next/.next', 'site-next/tsconfig.tsbuildinfo'],
   },
 }

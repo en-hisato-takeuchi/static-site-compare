@@ -6,6 +6,7 @@
 // - テキストは、ブラウザが対応していれば brotli か gzip で圧縮して返す
 import { createReadStream } from 'node:fs'
 import { stat } from 'node:fs/promises'
+import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
 import { extname, join, normalize, sep } from 'node:path'
 import { pipeline } from 'node:stream/promises'
@@ -113,8 +114,38 @@ const handle = async (root, preview, req, res) => {
     .end('Not Found')
 }
 
+// 静的なファイルでは配れない構成（Next.js）は、その構成のサーバーを起動して、準備ができるまで待つ
+const startAppServer = async (stack) => {
+  const child = spawn(process.execPath, stack.start.args, {
+    cwd: join(ROOT, stack.start.cwd),
+    stdio: ['ignore', 'ignore', 'inherit'],
+  })
+  const url = `http://127.0.0.1:${stack.port}`
+  for (let attempt = 0; attempt < 100; attempt++) {
+    if (child.exitCode !== null)
+      throw new Error(`${stack.name} が起動しませんでした`)
+    if (
+      await fetch(`${url}/`).then(
+        () => true,
+        () => false,
+      )
+    ) {
+      return { server: { close: () => child.kill() }, url, child }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+  child.kill()
+  throw new Error(`${stack.name} の起動を待ちきれませんでした`)
+}
+
 export const startServer = async (name) => {
   const stack = getStack(name)
+  if (stack.start) {
+    if (!(await isDirectory(stack.outPath))) {
+      throw new Error(`${stack.outDir} がありません。先にビルドしてください`)
+    }
+    return startAppServer(stack)
+  }
   if (!(await isDirectory(stack.outPath))) {
     throw new Error(`${stack.outDir} がありません。先にビルドしてください`)
   }
@@ -139,6 +170,13 @@ export const startServer = async (name) => {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { url } = await startServer(process.argv[2])
+  const { url, child } = await startServer(process.argv[2])
+  // Playwright などに止められたら、起動した子のサーバーも止める
+  for (const signal of ['SIGINT', 'SIGTERM']) {
+    process.on(signal, () => {
+      child?.kill()
+      process.exit(0)
+    })
+  }
   console.log(`${process.argv[2]} を ${url} で配信しています`)
 }
