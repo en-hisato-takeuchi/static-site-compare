@@ -29,6 +29,10 @@ const CONTENT_TYPES = {
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
 }
+const CLIENT_ABORTS = new Set([
+  'ERR_STREAM_PREMATURE_CLOSE',
+  'ERR_STREAM_UNABLE_TO_PIPE',
+])
 const COMPRESSIBLE = new Set([
   '.html',
   '.css',
@@ -113,6 +117,8 @@ export const startServer = async (name) => {
   }
   const server = createServer((req, res) => {
     handle(stack.outPath, req, res).catch((error) => {
+      // ブラウザが読み込みを途中でやめたとき（遅延読み込みの画像など）は、エラーとして扱わない
+      if (CLIENT_ABORTS.has(error.code)) return
       console.error(error)
       if (!res.headersSent) res.writeHead(500).end()
     })
