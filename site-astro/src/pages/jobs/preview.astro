@@ -1,0 +1,94 @@
+---
+// CMS の「プレビュー」から開く、公開前の求人原稿。ページ自体は静的な HTML で、
+// 下書きはブラウザが CMS から取って組み立てる（src/scripts/job-view.ts）。
+// ブラウザに置くキーは GET 権限だけのもの（サーバー用のキーではない）
+import categoryFacility from '../../../../spec/assets/images/category-facility.jpg'
+import categoryOffice from '../../../../spec/assets/images/category-office.jpg'
+import categoryStore from '../../../../spec/assets/images/category-store.jpg'
+import Photo from '../../components/Photo.astro'
+import Layout from '../../layouts/Layout.astro'
+
+// 写真は、職種カテゴリごとに最適化した <picture> を <template> に入れておき、ブラウザが選ぶ
+const CATEGORY_PHOTOS = {
+  store: {
+    src: categoryStore,
+    alt: 'サウナストーンにひしゃくで水をかけるところ',
+  },
+  facility: { src: categoryFacility, alt: '窓辺に置いたサウナストーブ' },
+  office: { src: categoryOffice, alt: 'ノートパソコンで仕事をする社員の手元' },
+}
+const {
+  PUBLIC_MICROCMS_BROWSER_API_ENDPOINT,
+  PUBLIC_MICROCMS_BROWSER_API_KEY,
+} = import.meta.env
+---
+
+<Layout
+  title="プレビュー"
+  description="CMS の下書きの求人をプレビューするページです。"
+  noindex
+>
+  <div
+    id="preview-root"
+    data-endpoint={PUBLIC_MICROCMS_BROWSER_API_ENDPOINT}
+    data-api-key={PUBLIC_MICROCMS_BROWSER_API_KEY}
+  >
+    <div class="container">
+      <p class="empty-state">下書きを読み込んでいます。</p>
+    </div>
+  </div>
+  {Object.entries(CATEGORY_PHOTOS).map(([category, photo]) => (
+    <template data-photo={category}>
+      <Photo
+        src={photo.src}
+        alt={photo.alt}
+        class="job-detail__image"
+        layout="prose"
+        eager
+      />
+    </template>
+  ))}
+</Layout>
+
+<script>
+  import {
+    renderJobContent,
+    renderNotFound,
+    type JobContent,
+  } from '../../scripts/job-view'
+
+  const NOT_FOUND_TITLE = 'プレビューできる求人が見つかりません'
+  const SITE_NAME = '株式会社ロウリュ研究所 採用サイト'
+
+  const root = document.getElementById('preview-root')
+  if (!root) throw new Error('#preview-root がありません')
+  const { endpoint, apiKey = '' } = root.dataset
+  const params = new URLSearchParams(location.search)
+  const id = params.get('id')
+  const draftKey = params.get('draftKey')
+
+  const fetchDraft = async (): Promise<JobContent | null> => {
+    if (!id || !draftKey) return null
+    const url = `${endpoint}/jobs/${encodeURIComponent(id)}?draftKey=${encodeURIComponent(draftKey)}`
+    const response = await fetch(url, {
+      headers: { 'X-MICROCMS-API-KEY': apiKey },
+    })
+    if (response.status === 404) return null
+    if (!response.ok)
+      throw new Error(`下書きの取得に失敗しました（${response.status}）`)
+    return response.json()
+  }
+
+  const draft = await fetchDraft().catch(() => null)
+  if (draft) {
+    const photoHtml =
+      document.querySelector<HTMLTemplateElement>(
+        `template[data-photo="${draft.category[0]}"]`,
+      )?.innerHTML ?? ''
+    document.title = `${draft.title} | ${SITE_NAME}`
+    root.innerHTML = `<p class="preview-banner">プレビュー中：この求人はまだ公開されていません</p>${renderJobContent(draft, photoHtml)}`
+  } else {
+    document.title = `${NOT_FOUND_TITLE} | ${SITE_NAME}`
+    root.innerHTML = renderNotFound(NOT_FOUND_TITLE)
+  }
+</script>
