@@ -1,0 +1,16 @@
+---
+// 旧 URL（/jobs/{id}/）。新 URL（/jobs/{category}/{id}/）への対応は CMS のデータから作る。
+// 静的出力では、Astro.redirect は meta refresh で転送する HTML になる
+import type { GetStaticPaths } from 'astro'
+import { getJobs, jobUrl } from '../../lib/jobs'
+
+export const getStaticPaths = (async () => {
+  const jobs = await getJobs()
+  return jobs.map((job) => ({
+    params: { id: job.id },
+    props: { to: jobUrl(job) },
+  }))
+}) satisfies GetStaticPaths
+
+return Astro.redirect(Astro.props.to, 301)
+---

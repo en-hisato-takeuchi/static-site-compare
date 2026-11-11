@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import { CATEGORY_LABELS } from '../lib/jobs'
+import { CATEGORY_LABELS, jobUrl } from '../lib/jobs'
 import JobDate from './JobDate.astro'
 
 interface Props {
@@ -17,27 +17,27 @@ const Heading = `h${level}`
   <p class="empty-state">現在募集している職種はありません。</p>
 ) : (
   <ul class="job-list">
-    {jobs.map(({ id, data }) => (
+    {jobs.map((job) => (
       <li class="job-list__item">
         <Heading class="job-list__title">
-          <a href={`/jobs/${id}/`}>{data.title}</a>
+          <a href={jobUrl(job)}>{job.data.title}</a>
         </Heading>
         <dl class="job-list__meta">
           <dt>職種カテゴリ</dt>
           <dd>
             <span class="category-tag">
-              {CATEGORY_LABELS[data.category[0]]}
+              {CATEGORY_LABELS[job.data.category[0]]}
             </span>
           </dd>
           <dt>勤務地</dt>
-          <dd>{data.location[0]}</dd>
+          <dd>{job.data.location[0]}</dd>
           <dt>雇用形態</dt>
-          <dd>{data.employmentType[0]}</dd>
+          <dd>{job.data.employmentType[0]}</dd>
           <dt>給与</dt>
-          <dd>{data.salary}</dd>
+          <dd>{job.data.salary}</dd>
         </dl>
         <p class="job-list__date">
-          公開日 <JobDate date={data.publishedAt} />
+          公開日 <JobDate date={job.data.publishedAt} />
         </p>
       </li>
     ))}

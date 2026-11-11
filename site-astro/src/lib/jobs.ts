@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content'
+import { type CollectionEntry, getCollection } from 'astro:content'
 
 export const PER_PAGE = 10
 
@@ -14,8 +14,17 @@ export const getJobs = async () =>
     (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
   )
 
-export const pageUrl = (page: number) =>
-  page === 1 ? '/jobs/' : `/jobs/page/${page}/`
+export type Category = keyof typeof CATEGORY_LABELS
+
+export const jobUrl = (job: CollectionEntry<'jobs'>) =>
+  `/jobs/${job.data.category[0]}/${job.id}/`
+
+// category を渡さないときは、すべての職種の一覧
+export const listUrl = (category?: Category) =>
+  category ? `/jobs/${category}/` : '/jobs/'
+
+export const pageUrl = (page: number, category?: Category) =>
+  page === 1 ? listUrl(category) : `${listUrl(category)}page/${page}/`
 
 const DESCRIPTION_LENGTH = 120
 

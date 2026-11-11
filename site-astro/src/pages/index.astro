@@ -18,18 +18,21 @@ const latestJobs = (await getJobs()).slice(0, LATEST_COUNT)
 
 const CATEGORIES = [
   {
+    slug: 'store',
     name: '店舗スタッフ',
     text: '熱波師、ロウリュ担当、休憩処スタッフ。お客さまのいちばん近くで、温度を届けます。',
     photo: categoryStore,
     alt: 'サウナストーンにひしゃくで水をかけるところ',
   },
   {
+    slug: 'facility',
     name: '施設管理',
     text: '水風呂の温度管理、サウナストーブの保守、テントサウナの設営。研究棟の環境を守ります。',
     photo: categoryFacility,
     alt: '窓辺に置いたサウナストーブ',
   },
   {
+    slug: 'office',
     name: '本社',
     text: '新店舗の開発、広報、Web エンジニア。次の研究棟と、ここまでの道のりをつくります。',
     photo: categoryOffice,
@@ -56,8 +59,8 @@ const CATEGORIES = [
         <p class="hero__lead">
           都市の5つの研究棟で、ととのいを研究し、届ける仲間を募集しています。
         </p>
-        <a class="button" href="/process/">
-          応募する
+        <a class="button" href="/process/#visit">
+          まずはサウナ見学から
         </a>
       </div>
     </div>
@@ -142,7 +145,7 @@ const CATEGORIES = [
   <section class="container section">
     <h2 class="section__title">3つの仕事</h2>
     <ul class="category-cards">
-      {CATEGORIES.map(({ name, text, photo, alt }) => (
+      {CATEGORIES.map(({ slug, name, text, photo, alt }) => (
         <li class="category-cards__item">
           <Photo
             src={photo}
@@ -152,7 +155,7 @@ const CATEGORIES = [
           />
           <div class="category-cards__body">
             <h3 class="category-cards__title">
-              <a href="/jobs/">{name}</a>
+              <a href={`/jobs/${slug}/`}>{name}</a>
             </h3>
             <p class="category-cards__text">{text}</p>
           </div>

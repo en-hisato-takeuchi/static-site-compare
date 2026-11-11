@@ -1,16 +1,19 @@
 ---
 import type { GetStaticPaths } from 'astro'
-import categoryFacility from '../../../../spec/assets/images/category-facility.jpg'
-import categoryOffice from '../../../../spec/assets/images/category-office.jpg'
-import categoryStore from '../../../../spec/assets/images/category-store.jpg'
-import JobDate from '../../components/JobDate.astro'
-import Photo from '../../components/Photo.astro'
-import Layout from '../../layouts/Layout.astro'
-import { CATEGORY_LABELS, getJobs, toDescription } from '../../lib/jobs'
+import categoryFacility from '../../../../../spec/assets/images/category-facility.jpg'
+import categoryOffice from '../../../../../spec/assets/images/category-office.jpg'
+import categoryStore from '../../../../../spec/assets/images/category-store.jpg'
+import JobDate from '../../../components/JobDate.astro'
+import Photo from '../../../components/Photo.astro'
+import Layout from '../../../layouts/Layout.astro'
+import { CATEGORY_LABELS, getJobs, toDescription } from '../../../lib/jobs'
 
 export const getStaticPaths = (async () => {
   const jobs = await getJobs()
-  return jobs.map((job) => ({ params: { id: job.id }, props: { job } }))
+  return jobs.map((job) => ({
+    params: { category: job.data.category[0], id: job.id },
+    props: { job },
+  }))
 }) satisfies GetStaticPaths
 
 // 求人データに写真は持たせず、職種カテゴリの写真を使う
@@ -42,6 +45,9 @@ const photo = CATEGORY_PHOTOS[category]
         </li>
         <li class="breadcrumb__item">
           <a href="/jobs/">求人一覧</a>
+        </li>
+        <li class="breadcrumb__item">
+          <a href={`/jobs/${category}/`}>{CATEGORY_LABELS[category]}</a>
         </li>
         <li class="breadcrumb__item" aria-current="page">
           {data.title}
@@ -85,8 +91,8 @@ const photo = CATEGORY_PHOTOS[category]
         </div>
       </section>
       <div class="job-detail__actions">
-        <a class="button" href="/process/">
-          応募する
+        <a class="button" href="/process/#visit">
+          まずはサウナ見学から
         </a>
         <a href="/jobs/">求人一覧に戻る</a>
       </div>

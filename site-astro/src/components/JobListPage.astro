@@ -1,7 +1,7 @@
 ---
-// 求人一覧の1ページ分。/jobs/ と /jobs/page/{n}/ で使う
+// 求人一覧の1ページ分。/jobs/、/jobs/{category}/ と、それぞれの2ページ目以降で使う
 import type { CollectionEntry } from 'astro:content'
-import { pageUrl } from '../lib/jobs'
+import { CATEGORY_LABELS, type Category, listUrl, pageUrl } from '../lib/jobs'
 import Layout from '../layouts/Layout.astro'
 import ApplyCta from './ApplyCta.astro'
 import JobList from './JobList.astro'
@@ -11,25 +11,47 @@ interface Props {
   totalCount: number
   page: number
   lastPage: number
+  // 渡さないときは、すべての職種の一覧
+  category?: Category
 }
 
-const { jobs, totalCount, page, lastPage } = Astro.props
+const { jobs, totalCount, page, lastPage, category } = Astro.props
 const pages = Array.from({ length: lastPage }, (_, i) => i + 1)
 const suffix = page === 1 ? '' : `（${page}ページ目）`
+const heading = category ? `${CATEGORY_LABELS[category]}の求人` : '求人一覧'
+const prefix = category ? `${CATEGORY_LABELS[category]}の、` : ''
+const CATEGORY_LINKS = [
+  { category: undefined, label: 'すべて' },
+  ...Object.entries(CATEGORY_LABELS).map(([slug, label]) => ({
+    category: slug as Category,
+    label,
+  })),
+]
 ---
 
 <Layout
-  title={`求人一覧${suffix}`}
-  description={
-    page === 1
-      ? 'ロウリュ研究所で募集している職種の一覧です。'
-      : `ロウリュ研究所で募集している職種の一覧です（${page}ページ目）。`
-  }
+  title={`${heading}${suffix}`}
+  description={`${prefix}ロウリュ研究所で募集している職種の一覧です${suffix}。`}
 >
   <div class="container">
     <header class="page-head">
-      <h1 class="page-head__title">求人一覧</h1>
+      <h1 class="page-head__title">{heading}</h1>
     </header>
+    <nav class="category-nav" id="category-nav" aria-label="職種カテゴリ">
+      <ul class="category-nav__list">
+        {CATEGORY_LINKS.map((link) => (
+          <li>
+            <a
+              class="category-nav__link"
+              href={listUrl(link.category)}
+              aria-current={link.category === category ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
     {totalCount > 0 && <p class="job-count">全{totalCount}件</p>}
     <JobList jobs={jobs} level={2} />
     {lastPage > 1 && (
@@ -37,7 +59,7 @@ const suffix = page === 1 ? '' : `（${page}ページ目）`
         <ul class="pagination__list">
           {page > 1 && (
             <li>
-              <a class="pagination__link" href={pageUrl(page - 1)}>
+              <a class="pagination__link" href={pageUrl(page - 1, category)}>
                 前へ
               </a>
             </li>
@@ -46,7 +68,7 @@ const suffix = page === 1 ? '' : `（${page}ページ目）`
             <li>
               <a
                 class="pagination__link"
-                href={pageUrl(n)}
+                href={pageUrl(n, category)}
                 aria-current={n === page ? 'page' : undefined}
               >
                 {n}
@@ -55,7 +77,7 @@ const suffix = page === 1 ? '' : `（${page}ページ目）`
           ))}
           {page < lastPage && (
             <li>
-              <a class="pagination__link" href={pageUrl(page + 1)}>
+              <a class="pagination__link" href={pageUrl(page + 1, category)}>
                 次へ
               </a>
             </li>
