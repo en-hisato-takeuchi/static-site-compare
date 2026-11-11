@@ -208,7 +208,8 @@ const toJob = (index) => {
     updatedAt: date,
     publishedAt: date,
     revisedAt: date,
-    title: `${location}の${type.name}（${employmentType}）`,
+    // 「本社の Web エンジニア」のように、英字で始まる職種名の前には空白を入れる
+    title: `${location}の${/^[A-Za-z]/.test(type.name) ? ' ' : ''}${type.name}（${employmentType}）`,
     // microCMS のセレクトフィールドは、1つだけ選ぶ設定でも配列で返る
     category: [type.category],
     location: [location],
