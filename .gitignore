@@ -7,3 +7,6 @@ out/
 test-results/
 playwright-report/
 .DS_Store
+
+# 求人のダミーデータは件数を指定して作り直すので、リポジトリに置かない
+spec/cms/data/

@@ -9,6 +9,7 @@
 | `design/` | 見本の HTML と共通 CSS。HTML の約束は `design/README.md` |
 | `assets/images/` | 写真 |
 | `assets/copy.md` | 静的ページの文言と、写真の置き場所・代替テキスト |
+| `cms/` | 疑似 CMS に入れる求人のダミーデータの生成スクリプト |
 
 ## 写真
 
