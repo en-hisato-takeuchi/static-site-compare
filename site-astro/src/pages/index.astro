@@ -1,13 +1,163 @@
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>株式会社ロウリュ研究所 採用サイト</title>
-    <meta name="description" content="Astro のひな形です。" />
-  </head>
-  <body>
-    <main id="main">
-      <h1>株式会社ロウリュ研究所 採用サイト</h1>
-    </main>
-  </body>
-</html>
+---
+import categoryFacility from '../../../spec/assets/images/category-facility.jpg'
+import categoryOffice from '../../../spec/assets/images/category-office.jpg'
+import categoryStore from '../../../spec/assets/images/category-store.jpg'
+import hero from '../../../spec/assets/images/hero.jpg'
+import mosaicChairs from '../../../spec/assets/images/mosaic-chairs.jpg'
+import mosaicPlunge from '../../../spec/assets/images/mosaic-plunge.jpg'
+import mosaicSauna from '../../../spec/assets/images/mosaic-sauna.jpg'
+import ApplyCta from '../components/ApplyCta.astro'
+import Photo from '../components/Photo.astro'
+import VoiceList from '../components/VoiceList.astro'
+import Layout from '../layouts/Layout.astro'
+
+const CATEGORIES = [
+  {
+    name: '店舗スタッフ',
+    text: '熱波師、ロウリュ担当、休憩処スタッフ。お客さまのいちばん近くで、温度を届けます。',
+    photo: categoryStore,
+    alt: 'サウナストーンにひしゃくで水をかけるところ',
+  },
+  {
+    name: '施設管理',
+    text: '水風呂の温度管理、サウナストーブの保守、テントサウナの設営。研究棟の環境を守ります。',
+    photo: categoryFacility,
+    alt: '窓辺に置いたサウナストーブ',
+  },
+  {
+    name: '本社',
+    text: '新店舗の開発、広報、Web エンジニア。次の研究棟と、ここまでの道のりをつくります。',
+    photo: categoryOffice,
+    alt: 'ノートパソコンで仕事をする社員の手元',
+  },
+]
+---
+
+<Layout description="都市の5つの研究棟で、ととのいを研究し、届ける仲間を募集しています。">
+  <section class="hero">
+    <Photo
+      src={hero}
+      alt="ガラス越しに見た、木のベンチが並ぶサウナ室"
+      class="hero__image"
+      layout="hero"
+    />
+    <div class="hero__body">
+      <div class="container">
+        <h1 class="hero__title">
+          熱いのは、
+          <br />
+          サウナだけじゃない。
+        </h1>
+        <p class="hero__lead">
+          都市の5つの研究棟で、ととのいを研究し、届ける仲間を募集しています。
+        </p>
+        <a class="button" href="/process/">
+          応募する
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container section" id="about">
+    <h2 class="section__title">私たちについて</h2>
+    <div class="section__body">
+      <p>
+        ロウリュ研究所は、都市型のサウナ施設を5つ運営しています。店舗を「研究棟」と呼ぶのは、温度と湿度と休憩の組み合わせを、毎日まじめに試しているからです。
+      </p>
+      <p class="section__more">
+        <a href="/about/">私たちについて詳しく見る</a>
+      </p>
+    </div>
+    <div class="photo-mosaic">
+      <figure class="photo-mosaic__main">
+        <Photo
+          src={mosaicSauna}
+          alt="照明に照らされた、広いサウナ室とサウナストーブ"
+          class="photo-mosaic__image"
+          layout="main"
+        />
+        <figcaption>神田研究棟のサウナ室。92℃で毎朝10時に開きます。</figcaption>
+      </figure>
+      <figure class="photo-mosaic__sub">
+        <Photo
+          src={mosaicPlunge}
+          alt="岩場に置いた金属の水風呂"
+          class="photo-mosaic__image"
+          layout="third"
+        />
+        <figcaption>水風呂は16.0℃。</figcaption>
+      </figure>
+      <figure class="photo-mosaic__sub">
+        <Photo
+          src={mosaicChairs}
+          alt="森に面したテラスに並ぶ2脚の椅子"
+          class="photo-mosaic__image"
+          layout="third"
+        />
+        <figcaption>外気浴の椅子は、毎日向きを調整しています。</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="container section">
+    <h2 class="section__title">温度で見るロウリュ研究所</h2>
+    <div class="thermo">
+      <div class="thermo__scale" aria-hidden="true">
+        <span class="thermo__mark thermo__mark--cold" style="--at: 0%">
+          16℃
+        </span>
+        <span class="thermo__mark thermo__mark--air" style="--at: 10.5%">
+          24℃
+        </span>
+        <span class="thermo__mark thermo__mark--hot" style="--at: 100%">
+          92℃
+        </span>
+      </div>
+      <dl class="thermo__list">
+        <div class="thermo__item thermo__item--cold">
+          <dt class="thermo__label">
+            水風呂。夏も冬も、0.1℃単位で守っています
+          </dt>
+          <dd class="thermo__value">16.0℃</dd>
+        </div>
+        <div class="thermo__item">
+          <dt class="thermo__label">
+            外気浴スペースの、いちばん気持ちいい気温
+          </dt>
+          <dd class="thermo__value">24℃</dd>
+        </div>
+        <div class="thermo__item thermo__item--hot">
+          <dt class="thermo__label">神田研究棟のサウナ室</dt>
+          <dd class="thermo__value">92℃</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="container section">
+    <h2 class="section__title">3つの仕事</h2>
+    <ul class="category-cards">
+      {CATEGORIES.map(({ name, text, photo, alt }) => (
+        <li class="category-cards__item">
+          <Photo
+            src={photo}
+            alt={alt}
+            class="category-cards__image"
+            layout="third"
+          />
+          <div class="category-cards__body">
+            <h3 class="category-cards__title">{name}</h3>
+            <p class="category-cards__text">{text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section">
+    <h2 class="section__title">研究員の声</h2>
+    <VoiceList />
+  </section>
+
+  <ApplyCta />
+</Layout>

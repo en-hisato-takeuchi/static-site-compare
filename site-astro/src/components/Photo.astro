@@ -1,0 +1,44 @@
+---
+// 写真は AVIF と WebP を出し分け、元の JPEG を最後の手段にする。3構成で同じ幅と sizes を使う
+import { Picture } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+// 写真の枠ごとの、画面に出る幅。.container の最大幅は 68rem
+const LAYOUTS = {
+  hero: { widths: [640, 1280, 1920], sizes: '100vw' },
+  wide: { widths: [640, 1280], sizes: '(min-width: 72rem) 68rem, 100vw' },
+  main: {
+    widths: [640, 1280],
+    sizes: '(min-width: 72rem) 45rem, (min-width: 48em) 66vw, 100vw',
+  },
+  third: {
+    widths: [640, 1280],
+    sizes: '(min-width: 72rem) 22rem, (min-width: 48em) 33vw, 100vw',
+  },
+  prose: { widths: [640, 1280], sizes: '(min-width: 50rem) 46rem, 100vw' },
+}
+
+interface Props {
+  src: ImageMetadata
+  alt: string
+  class: string
+  layout: keyof typeof LAYOUTS
+  // 1画面目に入る写真。遅延読み込みしない
+  eager?: boolean
+}
+
+const { src, alt, class: className, layout, eager = false } = Astro.props
+const { widths, sizes } = LAYOUTS[layout]
+const isHero = layout === 'hero'
+---
+
+<Picture
+  src={src}
+  alt={alt}
+  class={className}
+  formats={['avif', 'webp']}
+  widths={widths}
+  sizes={sizes}
+  loading={isHero || eager ? 'eager' : 'lazy'}
+  fetchpriority={isHero ? 'high' : undefined}
+/>

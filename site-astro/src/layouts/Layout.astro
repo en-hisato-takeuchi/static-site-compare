@@ -1,0 +1,41 @@
+---
+import '../../../spec/design/styles.css'
+import Footer from '../components/Footer.astro'
+import Header from '../components/Header.astro'
+
+interface Props {
+  // ページ名。トップでは渡さない
+  title?: string
+  description: string
+}
+
+const SITE_NAME = '株式会社ロウリュ研究所 採用サイト'
+const { title, description } = Astro.props
+const NAV = [
+  { href: '/about/', label: '私たちについて' },
+  { href: '/workplace/', label: '働く環境' },
+  { href: '/process/', label: '選考の流れ' },
+]
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title ? `${title} | ${SITE_NAME}` : SITE_NAME}</title>
+    <meta name="description" content={description} />
+    <script is:inline>
+      document.documentElement.classList.add('js')
+    </script>
+  </head>
+  <body>
+    <Header nav={NAV} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer nav={NAV} />
+    <script>
+      import '../../../spec/design/menu.js'
+    </script>
+  </body>
+</html>

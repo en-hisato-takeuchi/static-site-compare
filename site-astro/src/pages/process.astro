@@ -1,0 +1,68 @@
+---
+import visit from '../../../spec/assets/images/visit.jpg'
+import ApplyCta from '../components/ApplyCta.astro'
+import Photo from '../components/Photo.astro'
+import Layout from '../layouts/Layout.astro'
+
+const STEPS = [
+  { title: '応募', text: '求人一覧から、気になる職種に応募してください。' },
+  { title: '書類選考', text: '1週間ほどで結果をお知らせします。' },
+  { title: '面接', text: '研究棟の会議室で、配属先の責任者と話します。' },
+  {
+    title: '最終面接',
+    text: '最終面接はサウナで行います（任意）。服装は館内着で構いません。',
+  },
+  { title: '内定', text: '入社日は相談して決めます。' },
+]
+---
+
+<Layout
+  title="選考の流れ"
+  description="応募から内定までの流れと、サウナ見学の案内です。"
+>
+  <div class="container">
+    <header class="page-head">
+      <h1 class="page-head__title">選考の流れ</h1>
+      <p class="page-head__lead">応募から内定まで、3週間ほどかかります。</p>
+    </header>
+
+    <section class="section">
+      <h2 class="section__title">選考のステップ</h2>
+      <ol class="step-list">
+        {STEPS.map(({ title, text }) => (
+          <li class="step-list__item">
+            <h3 class="step-list__title">{title}</h3>
+            <p>{text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="section" id="visit">
+      <h2 class="section__title">サウナ見学</h2>
+      <div class="section__body">
+        <p>
+          応募の前に、研究棟を見学できます。仕事の様子を見たあと、そのままサウナに入っていってください。
+        </p>
+      </div>
+      <Photo
+        src={visit}
+        alt="サウナ小屋の入口。壁にタオルが掛かっている"
+        class="prose-image"
+        layout="prose"
+      />
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">よくある質問</h2>
+      <dl class="faq section__body">
+        <dt>サウナが苦手でも働けますか？</dt>
+        <dd>本社の職種なら、サウナ室に入る仕事はありません。</dd>
+        <dt>熱波師は未経験でも応募できますか？</dt>
+        <dd>できます。入社後3か月、タオルの振り方から研修します。</dd>
+      </dl>
+    </section>
+  </div>
+
+  <ApplyCta />
+</Layout>

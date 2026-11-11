@@ -1,0 +1,30 @@
+---
+interface Props {
+  nav: { href: string; label: string }[]
+}
+
+const { nav } = Astro.props
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="site-footer__tagline">
+      今日も、どこかの研究棟で誰かがととのっている。
+    </p>
+    <ul class="site-footer__nav">
+      {nav.map(({ href, label }) => (
+        <li>
+          <a href={href}>{label}</a>
+        </li>
+      ))}
+    </ul>
+    <p class="site-footer__note">
+      このサイトは架空の会社の採用サイトです。実在の会社・施設・人物とは関係ありません。
+      <br />
+      <a href="https://github.com/en-hisato-takeuchi/static-site-compare/blob/main/spec/README.md">
+        写真のクレジット（GitHub）
+      </a>
+      <br />© 株式会社ロウリュ研究所
+    </p>
+  </div>
+</footer>
